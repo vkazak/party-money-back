@@ -3,7 +3,8 @@ import {Text, Image, FlatList, View, StyleSheet, TouchableHighlight} from 'react
 import axios from 'axios';
 import makeFullUrl from '../utils';
 import { ListItem, Icon, Overlay, Input, Button } from 'react-native-elements';
-import commonStyles from './common-styles';
+import commonStyles, { MAIN_COLOR } from './common-styles';
+import PMBOverlay from './pmb-overlay';
 
 const AddPartyDialog = (props) => {
     const [name, setName] = useState("");
@@ -28,24 +29,26 @@ const AddPartyDialog = (props) => {
     }
 
     return (
-        <Overlay animationType="fade" onBackdropPress={props.onClose} isVisible={props.isVisible}>
-             <View style={{height:"80%", minWidth:"80%"}}>
-                <Input
-                    label='Party name'
-                    placeholder='Scrinzh'
-                    onChangeText={text => {
-                        setName(text);
-                        setErrorMsg("");
-                    }}
-                    errorStyle={{ color: 'red' }}
-                    errorMessage={errorMsg}
-                />
-                <View>
-                    <Button title="Save" onPress={onSave}/>
-                    <Button title="Cancel" type="outline" onPress={props.onClose}/>
-                </View>
-            </View>
-        </Overlay>
+        <PMBOverlay
+            title='Add a new party'
+            isVisible={props.isVisible}
+            onClose={props.onClose}
+            onSave={onSave}
+            
+        >
+            <Input
+                containerStyle={{marginVertical: 30}}
+                label='Party name'
+                placeholder='Scrinzh'
+                onChangeText={text => {
+                    setName(text);
+                    setErrorMsg("");
+                }}
+                labelStyle={{ fontWeight: "500"}}
+                errorStyle={{ color: 'red' }}
+                errorMessage={errorMsg}
+            />
+        </PMBOverlay>
     )
 }
 
@@ -79,7 +82,6 @@ const PartiesList = (props) => {
     return(
         <View style={{flex:1}}>
             <FlatList 
-                style={{zIndex: 0}}
                 data={parties}
                 renderItem={renderPartyItem}
                 keyExtractor={party => party._id}
@@ -87,7 +89,7 @@ const PartiesList = (props) => {
             <Icon 
                 containerStyle={commonStyles.floatingIconButton}
                 name='add'
-                color='#007AFF'
+                color={MAIN_COLOR}
                 onPress={() => setShow(true)}
                 reverse
             />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Text, Image, FlatList, View, StyleSheet, TouchableHighlight} from 'react-native';
+import {FlatList} from 'react-native';
 import axios from 'axios';
 import makeFullUrl from '../utils';
 import { ListItem } from 'react-native-elements';
