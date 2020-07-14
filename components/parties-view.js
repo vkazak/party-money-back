@@ -9,32 +9,64 @@ import PMBOverlay from './pmb-overlay';
 const AddPartyDialog = (props) => {
     const [name, setName] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const [showSavingView, setSavingView] = useState(false);
+    const [showDoneView, setDoneView] = useState(false);
+    const [showErrorView, setErrorView] = useState(false);
+
+    const clearStates = () => {
+        setName("");
+        setErrorMsg("");
+        setSavingView(false);
+        setDoneView(false);
+        setErrorView(false);
+    }
 
     const onSave = () => {
         if (name) {
+            setSavingView(true);
+            let party;
+
             axios.post(makeFullUrl('/parties/add'), {name})
                 .then(response => {
-                    const party = response.data;
-                    props.addPartyToTheList(party);
+                    party = response.data;
                     const partyUser = {partyId: party._id, userId: props.userId};
-                    axios.post(makeFullUrl(`/parties/adduser`), partyUser)
-                        .then(response => props.onClose())
-                        .catch(err => console.log(err));
+                    return (axios.post(makeFullUrl(`/parties/adduser`), partyUser))
                 })
-                .catch(err => console.log(err));
+                .then(() => {
+                    setDoneView(true);
+                    props.addPartyToTheList(party);
+                })
+                .catch(err => {
+                    setErrorView(true);
+                    console.log(err);
+                })
+                .then(() => {
+                    setTimeout(() => {
+                        props.onClose();
+                        clearStates()
+                    }, 2000);
+                })
         }
         else {
             setErrorMsg('Enter a valid name for a party')
         }
     }
 
+    const onClose = () => {
+        setName("");
+        setErrorMsg("");
+        props.onClose();
+    };
+
     return (
         <PMBOverlay
             title='Add a new party'
             isVisible={props.isVisible}
-            onClose={props.onClose}
+            onClose={onClose}
             onSave={onSave}
-            
+            showSavingView={showSavingView}
+            showDoneView={showDoneView}
+            showErrorView={showErrorView}
         >
             <Input
                 containerStyle={{marginVertical: 30}}

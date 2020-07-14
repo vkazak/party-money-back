@@ -1,7 +1,33 @@
-import { Overlay, Button } from 'react-native-elements';
-import { Text, View, StyleSheet } from 'react-native';
+import { Overlay, Button, Icon } from 'react-native-elements';
+import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
 import React from 'react';
-const { MAIN_COLOR } = require("./common-styles");
+const { MAIN_COLOR, APP_GREEN, APP_RED } = require("./common-styles");
+
+const IndicatorScreen = (props) => {
+    let showLoading = props.showSavingView && !(props.showDoneView || props.showErrorView);
+    return(
+        <View style={props.showSavingView ? style.savingView : style.hidden}>
+            <ActivityIndicator
+                size="large"
+                color={MAIN_COLOR}
+                style={showLoading ? style.indicator : style.hidden}
+                animating={showLoading}
+            />
+            <Icon
+                name="check-circle"
+                color={APP_GREEN}
+                size={60}
+                style={props.showDoneView ? style.indicator : style.hidden}
+            />
+            <Icon
+                name="highlight-off"
+                color={APP_RED}
+                size={60}
+                style={props.showErrorView ? style.indicator : style.hidden}
+            />
+        </View>
+    )
+}
 
 const PMBOverlay = (props) => {
 
@@ -15,11 +41,18 @@ const PMBOverlay = (props) => {
                 <View style={style.header}>
                     <Text style={style.headerText}>{props.title}</Text>
                 </View>
-                <View style={style.content}>{props.children}</View>
-                <View style={style.footer}>
-                    <Button style={style.button} title="Cancel" type="outline" onPress={props.onClose}/>
-                    <Button style={style.button} title="Save" onPress={props.onSave}/>
-                </View> 
+                <View>
+                    <View style={style.content}>{props.children}</View>
+                    <View style={style.footer}>
+                        <Button style={style.button} title="Cancel" type="outline" onPress={props.onClose}/>
+                        <Button style={style.button} title="Save" onPress={props.onSave}/>
+                    </View> 
+                    <IndicatorScreen 
+                        showSavingView={props.showSavingView}
+                        showDoneView={props.showDoneView}
+                        showErrorView={props.showErrorView}
+                    />
+                </View>
             </View>
         </Overlay>
     )
@@ -59,6 +92,24 @@ const style = StyleSheet.create({
         marginLeft: 10,
         width: 100,
         flexGrow: 0.3
+    },
+    savingView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        position:"absolute", 
+        width: "100%", 
+        height: "100%", 
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        borderBottomLeftRadius: 3,
+        borderBottomRightRadius: 3,
+    },
+    indicator: {
+        paddingBottom: 60
+    },
+    hidden : {
+        width : 0,
+        height : 0
     }
 });
 
