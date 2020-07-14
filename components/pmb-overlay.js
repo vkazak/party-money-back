@@ -61,7 +61,7 @@ const PMBOverlay = (props) => {
 const style = StyleSheet.create({
     container: {
         maxHeight: "80%",
-        minWidth: "80%",
+        minWidth: "90%",
         margin: -10
     },
     headerText: {

@@ -116,7 +116,7 @@ const PartiesList = (props) => {
     }
 
     return(
-        <View>
+        <View style={{flex: 1}}>
             <FlatList 
                 style={commonStyles.block}
                 data={parties}
