@@ -1,10 +1,11 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import UserList from './components/users-view';
 import PartiesList from './components/parties-view';
+import PartyReview from './components/party-review-view';
 
 const Stack = createStackNavigator();
 
@@ -17,8 +18,12 @@ export default function App() {
                     component={UserList}
                 />
                 <Stack.Screen
-                    name="Parties List"
+                    name="Parties list"
                     component={PartiesList}
+                />
+                <Stack.Screen
+                    name="Party review"
+                    component={PartyReview}
                 />
             </Stack.Navigator>
         </NavigationContainer>

@@ -9,6 +9,13 @@ const listStyles = StyleSheet.create({
         position: 'absolute',
         bottom: 10,
         right: 10
+    },
+    block: {
+        padding: 8,
+        shadowColor: 'grey',
+        shadowOffset: {width: 3,  height: 3},
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
     }
 });
 

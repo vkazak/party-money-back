@@ -99,9 +99,13 @@ const PartiesList = (props) => {
     }, []);
 
     const renderPartyItem = ({item}) => {
+        const onPress = () => {
+            props.navigation.navigate("Party review", {party: item})
+        };
         return(
             <ListItem 
                 title={item.name}
+                onPress={onPress}
                 chevron
             />
         );
@@ -112,8 +116,9 @@ const PartiesList = (props) => {
     }
 
     return(
-        <View style={{flex:1}}>
+        <View>
             <FlatList 
+                style={commonStyles.block}
                 data={parties}
                 renderItem={renderPartyItem}
                 keyExtractor={party => party._id}

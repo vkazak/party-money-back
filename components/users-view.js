@@ -3,6 +3,7 @@ import {FlatList} from 'react-native';
 import axios from 'axios';
 import makeFullUrl from '../utils';
 import { ListItem } from 'react-native-elements';
+import commonStyles from './common-styles';
 
 const UserList = (props) => {
 
@@ -19,7 +20,7 @@ const UserList = (props) => {
     const renderUserItem = ({item}) => {
 
         const onPress = () => {
-            props.navigation.navigate("Parties List", {user: item})
+            props.navigation.navigate("Parties list", {user: item})
         };
 
         return(
@@ -38,6 +39,7 @@ const UserList = (props) => {
 
     return(
         <FlatList
+            style={commonStyles.block}
             data={users}
             renderItem={renderUserItem}
             keyExtractor={user => user._id}
