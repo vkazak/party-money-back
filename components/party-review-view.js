@@ -70,58 +70,101 @@ const PartyButton = (props) => {
     )
 }
 
+const UserAndCheckBoxItem = (props) => {
+    const [checked, setChecked] = useState(false);
+    const item = props.item;
+    const checkedUsers = props.checkedUsers;
+
+    return(
+        <ListItem 
+            title={item.name}
+            subtitle={item.email}
+            leftAvatar={{
+                source: require('../src-files/default-avatar.png'),
+                rounded: true
+            }}
+            checkBox={{
+                checked: checked,
+                onPress: () => {
+                    checked ? checkedUsers.delete(item._id) : checkedUsers.add(item._id)
+                    setChecked(!checked)
+                }
+            }}
+        />
+    );
+}
+
 const AddUsersOverlay = (props) => {
     const [users, setUsers] = useState([]);
-    const [checked, setChecked] = useState(new Set());
     const [showSavingView, setSavingView] = useState(false);
     const [showDoneView, setDoneView] = useState(false);
     const [showErrorView, setErrorView] = useState(false);
+
+    const checkedUsers = new Set();
 
     const clearStates = () => {
         setSavingView(false);
         setDoneView(false);
         setErrorView(false);
+        checkedUsers.clear();
     }
 
     useEffect(() => {
         axios.get(makeFullUrl('/users'))
             .then(response => {
                 const allUsers = response.data;
-                console.log(props);
-                const filterFn = (user) => !props.partyUsers.some(partyUser => partyUser._id == user._id);
+                const filterFn = (user) => 
+                    !props.partyUsers.some(partyUser => partyUser._id == user._id);
                 const usersNotInParty = allUsers.filter(filterFn);
-                setUsers(usersNotInParty)
+                setUsers(usersNotInParty);
             })
             .catch(err => console.log(err));
-    }, []);
+    }, [props.partyUsers]);
 
     const onClose = () => {
         props.onClose();
         clearStates();
     }
 
-    const onSave = () => {
+    const addUsersToTheParty = async () => {
+        const checkedUsersArr = Array.from(checkedUsers);
+        const addUserToPartyPromises = checkedUsersArr.map(userId => 
+            axios.post(makeFullUrl(`/parties/adduser`), {userId, partyId: props.partyId})
+        );
+        const addedPartyUsers = await Promise.all(addUserToPartyPromises);
+        return (addedPartyUsers.map(pu => pu.data));
+    }
 
+    const onSave = () => {
+        setSavingView(true);
+        addUsersToTheParty()
+            .then(addedPartyUsers => {
+                console.log(addedPartyUsers);
+                const addedUsers = addedPartyUsers.map(partyUser => 
+                    users.find(user => user._id == partyUser.userId)
+                );
+                console.log(addedUsers);
+                props.addUsersToList(addedUsers);
+                setDoneView(true);
+            })
+            .catch(err => {
+                setErrorView(true);
+                console.log(err);
+            })
+            .then(() => {
+                setTimeout(() => {
+                    onClose()
+                }, 2000);
+            })
     }
 
     const renderUserItem = ({item}) => {
-        return(
-            <ListItem 
-                title={item.name}
-                subtitle={item.email}
-                leftAvatar={{
-                    source: require('../src-files/default-avatar.png'),
-                    rounded: true
-                }}
-                checkBox={{
-                    checked: checked.has(item._id),
-                    onPress: () => {
-                        const checkedItem = checked.has(item._id);
-                        setChecked(checkedItem ? checked.delete(item._id) : checked.add(item._id))
-                    }
-                }}
+        return (
+            <UserAndCheckBoxItem
+                item={item}
+                checkedUsers={checkedUsers}
             />
-        );
+        )
     }
 
     return(
@@ -134,12 +177,14 @@ const AddUsersOverlay = (props) => {
             showDoneView={showDoneView}
             showErrorView={showErrorView}
         >
-            <FlatList
-                style={{marginBottom: 10}}
-                data={users}
-                renderItem={renderUserItem}
-                keyExtractor={user => user._id}
-            />
+            <View style={{marginBottom: 10, height: 300}}>
+                
+                <FlatList
+                    data={users}
+                    renderItem={renderUserItem}
+                    keyExtractor={user => user._id}
+                />
+            </View>
         </PMBOverlay>
     )
 }
@@ -157,7 +202,6 @@ const PartyReview = (props) => {
         axios.get(makeFullUrl(`/users/by_party/${party._id}`))
             .then(response => {
                 setUsers(response.data);
-                console.log(response.data);
             })
             .catch(err => console.log(err));
 
@@ -167,6 +211,10 @@ const PartyReview = (props) => {
             })
             .catch(err => console.log(err));
     }, []);
+
+    const addUsersToList = (newUsers) => {
+        setUsers(users.slice().concat(newUsers))
+    }
 
     return (
         <View style={style.container}>
@@ -194,7 +242,9 @@ const PartyReview = (props) => {
             <AddUsersOverlay
                 isVisible={isAddUsersVisible}
                 partyUsers={users}
+                addUsersToList={addUsersToList}
                 onClose={() => setAddUsersVisible(false)}
+                partyId={party._id}
             />
         </View>
     )
