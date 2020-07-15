@@ -30,6 +30,7 @@ const IndicatorScreen = (props) => {
 }
 
 const PMBOverlay = (props) => {
+    const saveTitle = props.saveTitle || 'Save';
 
     return (
         <Overlay
@@ -45,7 +46,7 @@ const PMBOverlay = (props) => {
                     <View style={style.content}>{props.children}</View>
                     <View style={style.footer}>
                         <Button style={style.button} title="Cancel" type="outline" onPress={props.onClose}/>
-                        <Button style={style.button} title="Save" onPress={props.onSave}/>
+                        <Button style={style.button} title={saveTitle} onPress={props.onSave}/>
                     </View> 
                     <IndicatorScreen 
                         showSavingView={props.showSavingView}

@@ -44,7 +44,7 @@ const AddPartyDialog = (props) => {
                     setTimeout(() => {
                         props.onClose();
                         clearStates()
-                    }, 2000);
+                    }, 1000);
                 })
         }
         else {
@@ -61,6 +61,7 @@ const AddPartyDialog = (props) => {
     return (
         <PMBOverlay
             title='Add a new party'
+            saveTitle='Add'
             isVisible={props.isVisible}
             onClose={onClose}
             onSave={onSave}
@@ -86,7 +87,9 @@ const AddPartyDialog = (props) => {
 
 const PartiesList = (props) => {
 
-    const userId = props.route.params.user._id;
+    const user = props.route.params.user;
+    const userId = user._id;
+
     const [parties, setParties] = useState([]);
     const [showAddDialog, setShow] = useState(false);
     
@@ -100,7 +103,7 @@ const PartiesList = (props) => {
 
     const renderPartyItem = ({item}) => {
         const onPress = () => {
-            props.navigation.navigate("Party review", {party: item})
+            props.navigation.navigate("Party review", {party: item, user})
         };
         return(
             <ListItem 
