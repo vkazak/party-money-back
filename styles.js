@@ -13,9 +13,9 @@ const listStyles = StyleSheet.create({
     block: {
         padding: 8,
         shadowColor: 'grey',
-        shadowOffset: {width: 3,  height: 3},
+        shadowOffset: {width: 2,  height: 2},
         shadowOpacity: 0.3,
-        shadowRadius: 8,
+        shadowRadius: 6,
     }
 });
 

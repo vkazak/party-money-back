@@ -72,10 +72,14 @@ const AddUsersOverlay = (props) => {
 
     const onSave = () => {
         setSavingView(true);
-        addUsersToTheParty()
-            .then(addedPartyUsers => {
-                const addedUsers = addedPartyUsers.map(partyUser => 
-                    users.find(user => user._id == partyUser.userId)
+        const checkedUsersIds = Array.from(checkedUsers);
+        axios.post(
+            makeFullUrl(`/parties/addusers`), 
+            {usersIds : checkedUsersIds, partyId: props.partyId}
+        )
+            .then(() => {
+                const addedUsers = checkedUsersIds.map(userId => 
+                    users.find(user => user._id == userId)
                 );
                 props.addUsersToList(addedUsers);
                 setDoneView(true);

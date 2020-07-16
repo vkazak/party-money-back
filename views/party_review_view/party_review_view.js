@@ -6,6 +6,7 @@ import listStyles from '../../styles';
 import makeFullUrl from '../../utils';
 import AddPaymentOverlay from './add_payment_overlay';
 import AddUsersOverlay from './add_users_overlay';
+import PartyPaymentsList from './party_payments_list';
 
 const PartyUsersList = (props) => {
 
@@ -28,27 +29,6 @@ const PartyUsersList = (props) => {
             data={props.users}
             renderItem={renderUserItem}
             keyExtractor={user => user._id}
-        />
-    )
-}
-
-const PartyPaymentsList = (props) => {
-
-    const renderPaymentItem = ({item}) => {
-        return (
-            <ListItem 
-                title={item.description}
-                subtitle={item.amount.toString()}
-            />
-        )
-    }
-
-    return (
-        <FlatList
-            style={[listStyles.block, props.style]}
-            data={props.payments}
-            renderItem={renderPaymentItem}
-            keyExtractor={payment => payment._id}
         />
     )
 }
@@ -91,6 +71,7 @@ const PartyReviewView = (props) => {
         axios.get(makeFullUrl(`/payments/by_party/${party._id}`))
             .then(response => {
                 setPayments(response.data);
+                console.log(response.data);
             })
             .catch(err => console.log(err));
     }, []);
@@ -117,13 +98,13 @@ const PartyReviewView = (props) => {
                 /> 
             </View>
             <View>
+                <PartyPaymentsList 
+                    payments={payments}
+                    user={user}
+                />
                 <PartyUsersList 
                     style={{ paddingVertical: 16 }} 
                     users={users}
-                />
-                <PartyPaymentsList 
-                    style={{ paddingVertical: 16 }} 
-                    payments={payments}
                 />
             </View>
             <AddUsersOverlay
