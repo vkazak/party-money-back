@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import {Text, Image, FlatList, View, StyleSheet, TouchableHighlight} from 'react-native';
+import React, { useState } from 'react';
 import axios from 'axios';
-import makeFullUrl from '../utils';
-import { ListItem, Icon, Overlay, Input, Button } from 'react-native-elements';
-import commonStyles, { MAIN_COLOR } from './common-styles';
-import PMBOverlay from './pmb-overlay';
+import makeFullUrl from '../../utils';
+import { Input } from 'react-native-elements';
+import PMBOverlay from '../../components/pmb_overlay';
 
-const AddPartyDialog = (props) => {
+const AddPartyOverlay = (props) => {
     const [name, setName] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [showSavingView, setSavingView] = useState(false);
@@ -85,62 +83,4 @@ const AddPartyDialog = (props) => {
     )
 }
 
-const PartiesList = (props) => {
-
-    const user = props.route.params.user;
-    const userId = user._id;
-
-    const [parties, setParties] = useState([]);
-    const [showAddDialog, setShow] = useState(false);
-    
-    useEffect(() => {
-        axios.get(makeFullUrl(`/parties/by_user/${userId}`))
-            .then(response => {
-                setParties(response.data);
-            })
-            .catch(err => console.log(err));
-    }, []);
-
-    const renderPartyItem = ({item}) => {
-        const onPress = () => {
-            props.navigation.navigate("Party review", {party: item, user})
-        };
-        return(
-            <ListItem 
-                title={item.name}
-                onPress={onPress}
-                chevron
-            />
-        );
-    }
-
-    const addPartyToTheList = (party) => {
-        setParties(parties.slice().concat([party]));
-    }
-
-    return(
-        <View style={{flex: 1}}>
-            <FlatList 
-                style={commonStyles.block}
-                data={parties}
-                renderItem={renderPartyItem}
-                keyExtractor={party => party._id}
-            />
-            <Icon 
-                containerStyle={commonStyles.floatingIconButton}
-                name='add'
-                color={MAIN_COLOR}
-                onPress={() => setShow(true)}
-                reverse
-            />
-            <AddPartyDialog 
-                isVisible={showAddDialog}
-                onClose={() => setShow(false)}
-                userId={userId}
-                addPartyToTheList={addPartyToTheList}
-            />
-        </View>
-    )
-}
-
-export default PartiesList;
+export default AddPartyOverlay;

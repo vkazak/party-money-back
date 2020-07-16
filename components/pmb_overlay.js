@@ -1,7 +1,7 @@
 import { Overlay, Button, Icon } from 'react-native-elements';
 import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
 import React from 'react';
-const { MAIN_COLOR, APP_GREEN, APP_RED } = require("./common-styles");
+const { MAIN_COLOR, APP_GREEN, APP_RED } = require("../styles");
 
 const IndicatorScreen = (props) => {
     let showLoading = props.showSavingView && !(props.showDoneView || props.showErrorView);

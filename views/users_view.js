@@ -3,9 +3,9 @@ import {FlatList} from 'react-native';
 import axios from 'axios';
 import makeFullUrl from '../utils';
 import { ListItem } from 'react-native-elements';
-import commonStyles from './common-styles';
+import commonStyles from '../styles';
 
-const UserList = (props) => {
+const UsersListView = (props) => {
 
     const [users, setUsers] = useState([]);
 
@@ -28,7 +28,7 @@ const UserList = (props) => {
                 title={item.name}
                 subtitle={item.email}
                 leftAvatar={{
-                    source: require('../src-files/default-avatar.png'),
+                    source: require('../src_files/default-avatar.png'),
                     rounded: true
                 }}
                 onPress={onPress}
@@ -47,4 +47,4 @@ const UserList = (props) => {
     )
 }
 
-export default UserList;
+export default UsersListView;

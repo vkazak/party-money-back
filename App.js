@@ -3,9 +3,9 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import UserList from './components/users-view';
-import PartiesList from './components/parties-view';
-import PartyReview from './components/party-review-view';
+import UsersListView from './views/users_view';
+import PartiesListView from './views/parties_view/parties_view';
+import PartyReviewView from './views/party_review_view/party_review_view';
 
 const Stack = createStackNavigator();
 
@@ -15,15 +15,15 @@ export default function App() {
             <Stack.Navigator>
                 <Stack.Screen 
                     name="Users list"
-                    component={UserList}
+                    component={UsersListView}
                 />
                 <Stack.Screen
                     name="Parties list"
-                    component={PartiesList}
+                    component={PartiesListView}
                 />
                 <Stack.Screen
                     name="Party review"
-                    component={PartyReview}
+                    component={PartyReviewView}
                 />
             </Stack.Navigator>
         </NavigationContainer>
