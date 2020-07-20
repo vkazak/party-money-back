@@ -27,6 +27,7 @@ const AddPartyOverlay = (props) => {
             axios.post(makeFullUrl('/parties/add'), {name})
                 .then(response => {
                     party = response.data;
+                    party.users = [props.userId];
                     const request = {partyId: party._id, usersIds: [props.userId]};
                     return (axios.post(makeFullUrl(`/parties/addusers`), request))
                 })

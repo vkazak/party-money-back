@@ -106,7 +106,7 @@ const AddUsersOverlay = (props) => {
             showDoneView={showDoneView}
             showErrorView={showErrorView}
         >
-            <View style={{marginBottom: 10, height: 300}}>
+            <View style={{marginBottom: 10}}>
                 
                 <FlatList
                     data={users}

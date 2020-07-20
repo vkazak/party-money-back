@@ -7,6 +7,7 @@ import AddUsersOverlay from './add_users_overlay';
 import { PartyPaymentsList } from './party_payments_list';
 import PartyUsersList from './party_users_list';
 import DebtsOverlay from './debts_overlay';
+import { BodyContainer } from '../../components/component_containers';
 
 const PartyReviewView = (props) => {
 
@@ -42,7 +43,7 @@ const PartyReviewView = (props) => {
     }
 
     return (
-        <View style={style.container}>
+        <BodyContainer>
             <View>
                 <PartyPaymentsList 
                     payments={payments}
@@ -77,14 +78,11 @@ const PartyReviewView = (props) => {
                 users={users}
                 payments={payments}
             />
-        </View>
+        </BodyContainer>
     )
 }
 
 const style = StyleSheet.create({
-    container: {
-        flex: 1
-    },
     button: {
         height: 60,
         justifyContent: "center",

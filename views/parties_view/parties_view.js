@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, ScrollView } from 'react-native';
-import { Icon, ListItem } from 'react-native-elements';
+import { FlatList, View, ScrollView} from 'react-native';
+import { Icon, ListItem, Button } from 'react-native-elements';
 import makeFullUrl from '../../utils';
 import commonStyles, { MAIN_COLOR, APP_COLOR } from '../../styles';
 import AddPartyOverlay from './add_party_overlay';
+import { BodyContainer } from '../../components/component_containers';
 
 const PartiesListView = (props) => {
 
@@ -29,8 +30,16 @@ const PartiesListView = (props) => {
         return(
             <ListItem 
                 title={item.name}
+                subtitle={`${item.users.length} user${item.users.length > 1 ? 's' : ''}`}
+                subtitleStyle={{opacity: 0.3, fontSize: 13}}
                 onPress={onPress}
-                chevron
+                leftIcon={{
+                    name: 'ios-beer',
+                    type: 'ionicon',
+                    color: APP_COLOR,
+                    size: 35
+                }}
+                chevron={{color: APP_COLOR}}
             />
         );
     }
@@ -40,9 +49,9 @@ const PartiesListView = (props) => {
     }
 
     return(
-        <View style={{backgroundColor: APP_COLOR, flex: 1}}>
+        <BodyContainer>
             <ScrollView style={commonStyles.block}>
-                <View style={{borderRadius: 15, overflow: 'hidden',}}>
+                <View style={{borderRadius: 15, overflow: 'hidden', marginBottom: 20}}>
                     {parties.map(party => {
                         return(renderPartyItem({item: party}))
                     })}
@@ -51,7 +60,7 @@ const PartiesListView = (props) => {
             <Icon 
                 containerStyle={commonStyles.floatingIconButton}
                 name='add'
-                color={MAIN_COLOR}
+                color={APP_COLOR}
                 onPress={() => setShow(true)}
                 reverse
             />
@@ -61,13 +70,8 @@ const PartiesListView = (props) => {
                 userId={userId}
                 addPartyToTheList={addPartyToTheList}
             />
-        </View>
+        </BodyContainer>
     )
 }
-/*<FlatList 
-                style={commonStyles.block}
-                data={parties}
-                renderItem={renderPartyItem}
-                keyExtractor={party => party._id}
-            />*/
+
 export default PartiesListView;

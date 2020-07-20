@@ -1,5 +1,5 @@
 import { Overlay, Button, Icon } from 'react-native-elements';
-import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, ActivityIndicator, Modal } from 'react-native';
 import React from 'react';
 const { MAIN_COLOR, APP_GREEN, APP_RED, APP_COLOR } = require("../styles");
 
@@ -33,37 +33,56 @@ const PMBOverlay = (props) => {
     const saveTitle = props.saveTitle || 'Save';
 
     return (
-        <Overlay
-            isVisible={props.isVisible}
-            animationType="fade"
-            onBackdropPress={props.onClose}
+        <Modal
+            visible={props.isVisible}
+            animationType="slide"
+            onRequestClose={props.onClose}
+            transparent
         >
-            <View style={style.container}>
-                <View style={style.header}>
-                    <Text style={style.headerText}>{props.title}</Text>
-                </View>
-                <View>
-                    <View style={style.content}>{props.children}</View>
-                    <View style={style.footer}>
-                        <Button style={style.button} buttonStyle={{color: APP_COLOR}} title="Cancel" type="outline" onPress={props.onClose}/>
-                        <Button style={style.button} buttonStyle={{backgroundColor: APP_COLOR}} color={APP_COLOR} title={saveTitle} onPress={props.onSave}/>
-                    </View> 
-                    <IndicatorScreen 
-                        showSavingView={props.showSavingView}
-                        showDoneView={props.showDoneView}
-                        showErrorView={props.showErrorView}
-                    />
+            <View style={style.centeredView}>
+                <View style={style.container}>
+                    <View style={style.header}>
+                        <Text style={style.headerText}>{props.title}</Text>
+                    </View>
+                    <View>
+                        <View style={style.content}>{props.children}</View>
+                        <View style={style.footer}>
+                            <Button style={style.button} buttonStyle={{color: APP_COLOR}} title="Cancel" type="outline" onPress={props.onClose}/>
+                            <Button style={style.button} buttonStyle={{backgroundColor: APP_COLOR}} color={APP_COLOR} title={saveTitle} onPress={props.onSave}/>
+                        </View> 
+                        <IndicatorScreen 
+                            showSavingView={props.showSavingView}
+                            showDoneView={props.showDoneView}
+                            showErrorView={props.showErrorView}
+                        />
+                    </View>
                 </View>
             </View>
-        </Overlay>
+        </Modal>
     )
 }
 
+const borderRadius = 15;
+
 const style = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
     container: {
-        maxHeight: "80%",
-        minWidth: "90%",
-        margin: -10
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
     },
     headerText: {
         color: "white",
@@ -74,10 +93,9 @@ const style = StyleSheet.create({
         color: 'white'
     },
     header: {
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
+        borderTopLeftRadius: borderRadius,
+        borderTopRightRadius: borderRadius,
         backgroundColor: APP_COLOR,
-        width: "100%",
         height: 60,
     },
     content: {
@@ -103,8 +121,8 @@ const style = StyleSheet.create({
         width: "100%", 
         height: "100%", 
         backgroundColor: "rgba(255, 255, 255, 0.8)",
-        borderBottomLeftRadius: 3,
-        borderBottomRightRadius: 3,
+        borderBottomLeftRadius: borderRadius,
+        borderBottomRightRadius: borderRadius,
     },
     indicator: {
         paddingBottom: 60

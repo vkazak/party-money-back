@@ -9,7 +9,11 @@ const listStyles = StyleSheet.create({
     floatingIconButton: {
         position: 'absolute',
         bottom: 10,
-        right: 10
+        right: 10,
+        shadowColor: 'grey',
+        shadowOffset: {width: 2,  height: 2},
+        shadowOpacity: 1,
+        shadowRadius: 6,
     },
     block: {
         padding: 8,
