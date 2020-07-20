@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 export const MAIN_COLOR = '#007AFF';
 export const APP_GREEN = '#00BB3F';
-export const APP_RED = 'tomato';
+export const APP_RED = '#FF0000';
 export const APP_COLOR = '#ffc135';
 
 const listStyles = StyleSheet.create({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, View, StyleSheet, Text } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
-import listStyles, { APP_GREEN, APP_RED } from '../../styles';
+import listStyles, { APP_GREEN, APP_RED, APP_COLOR } from '../../styles';
 import PMBDivider from '../../components/pmb_divider';
 import PMBUser from '../../components/pmb_user';
 
@@ -35,7 +35,7 @@ const PaymentCard = (props) => {
     const payment = props.payment;
     const currentUserId = props.currentUserId;
 
-    const amountColor = payment.user._id == currentUserId ? APP_GREEN : APP_RED;
+    const amountColor = payment.user._id == currentUserId ? APP_GREEN : APP_COLOR;
     const amountStyle = [style.amount, { color: amountColor }]
 
     return (

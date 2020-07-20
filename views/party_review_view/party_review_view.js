@@ -77,6 +77,7 @@ const PartyReviewView = (props) => {
                 partyId={party._id}
                 users={users}
                 payments={payments}
+                currentUser={user}
             />
         </BodyContainer>
     )

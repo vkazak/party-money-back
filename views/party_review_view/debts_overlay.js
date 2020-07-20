@@ -4,7 +4,7 @@ import { FlatList, View, Text, StyleSheet } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 import makeFullUrl from '../../utils';
-import listStyles, { APP_GREEN } from '../../styles';
+import listStyles, { APP_GREEN, APP_COLOR, APP_RED } from '../../styles';
 import PMBDivider from '../../components/pmb_divider';
 import PMBUser from '../../components/pmb_user';
 
@@ -30,7 +30,7 @@ const amountInfoStyle = StyleSheet.create({
         opacity: 0.5
     },
     amount: {
-        color: APP_GREEN,
+        color: APP_COLOR,
         fontSize: 30,
         fontWeight: '700'
     }
@@ -38,16 +38,27 @@ const amountInfoStyle = StyleSheet.create({
 
 const DebtItem = (props) => {
     const debt = props.debt;
+    const currentUser = props.currentUser;
+    
+    const opacity = '30';
+    let itemColor = APP_COLOR;
+    if (debt.from._id == currentUser._id){
+        itemColor = APP_RED;
+    }
+    else if (debt.to._id == currentUser._id) {
+        itemColor = APP_GREEN;
+    }
+    const backgroundColor = itemColor + opacity;
 
     return (
-        <View style={debtStyle.container}>
+        <View style={[debtStyle.container, {backgroundColor: backgroundColor}]}>
             <View style={debtStyle.usersBlock}>
                 <PMBUser user={debt.from} />
                 <PMBUser user={debt.to} />
             </View>
             
             <View style={debtStyle.amountBlock}>
-                <Text style={debtStyle.amount}>{debt.amount}</Text>
+                <Text style={[debtStyle.amount, {color: itemColor}]}>{debt.amount.toFixed(1)}</Text>
             </View>
         </View>
     )
@@ -55,23 +66,27 @@ const DebtItem = (props) => {
 
 const debtStyle = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
         height: 60,
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingLeft: 10,
+        marginVertical: 5,
+        borderRadius: 15,
+        paddingVertical: 5
     },
     usersBlock: {
-        flex: 0.8,
-        flexDirection: 'column'
+        flex: 0.75,
+        flexDirection: 'column',
+        justifyContent: 'center',
     },
     amountBlock: {
-        flex: 0.2,
+        flex: 0.25,
         justifyContent: 'center',
-        marginRight: 16
     },
     amount: {
-        color: APP_GREEN,
-        fontSize: 25,
+        opacity: 0.9,
+        fontSize: 20,
         fontWeight: '700'
     }
 });
@@ -94,8 +109,8 @@ const DebtsOverlay = (props) => {
         if (props.users.length > 0 && props.payments.length > 0) {
             axios.get(makeFullUrl(`/calculate/debts/${props.partyId}`))
                 .then(response => {
-                    setSum(Number(response.data.spent));
-                    setPerUser(Number(response.data.perPerson));
+                    setSum(Number(response.data.spent).toFixed(1));
+                    setPerUser(Number(response.data.perPerson).toFixed(1));
                     setDebts(response.data.debts.map(populateDebt));
                 })
                 .catch(err => console.log(err));
@@ -108,12 +123,6 @@ const DebtsOverlay = (props) => {
                 <DebtItem debt={item} currentUser={props.currentUser} />
             </View>
         )
-    }
-
-    const makeSeparator = () => {
-        return {
-            
-        }
     }
 
     return (
@@ -136,13 +145,14 @@ const DebtsOverlay = (props) => {
                         amount={sum}
                     />
                 </View>
-                <FlatList
-                    data={debts}
-                    renderItem={renderDebtItem}
-                    keyExtractor={debt => {debt.from, debt.to}}
-                    ItemSeparatorComponent={ () => <PMBDivider style={{width: '60%'}} horizontal /> }
-
-                />
+                <View>
+                    <FlatList
+                        style={{margin: 5}}
+                        data={debts}
+                        renderItem={renderDebtItem}
+                        keyExtractor={debt => {debt.from, debt.to}}
+                    />
+                </View>
             </View>
         </PMBOverlay>
     )

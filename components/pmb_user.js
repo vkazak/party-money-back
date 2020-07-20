@@ -4,7 +4,7 @@ import { Avatar } from 'react-native-elements';
 
 const PMBUser = (props) => {
     return(
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 1}}>
             <Avatar
                 rounded
                 source={require('../src_files/default-avatar.png')}

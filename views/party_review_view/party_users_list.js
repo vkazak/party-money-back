@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, View } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import listStyles from '../../styles';
+import commonStyles from '../../styles';
 import { ListHeader } from './party_payments_list';
 
 const PartyUsersList = (props) => {
@@ -15,6 +15,7 @@ const PartyUsersList = (props) => {
                     source: require('../../src_files/default-avatar.png'),
                     rounded: true
                 }}
+                subtitleStyle={{opacity: 0.3, fontSize: 13}}
             />
         )
     }
@@ -25,12 +26,13 @@ const PartyUsersList = (props) => {
                 title='Users'
                 onPress={props.onAdd}
             />
-            <FlatList
-                style={[listStyles.block, props.style]}
-                data={props.users}
-                renderItem={renderUserItem}
-                keyExtractor={user => user._id}
-            /> 
+            <View style={commonStyles.block}>
+                <View style={{borderRadius: 15, overflow: 'hidden',}}>
+                    {props.users.map(user => {
+                        return(renderUserItem({item: user}))
+                    })}
+                </View>
+            </View>
         </View>
     )
 }
