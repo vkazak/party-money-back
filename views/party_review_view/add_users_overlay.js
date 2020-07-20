@@ -61,15 +61,6 @@ const AddUsersOverlay = (props) => {
         clearStates();
     }
 
-    const addUsersToTheParty = async () => {
-        const checkedUsersArr = Array.from(checkedUsers);
-        const addUserToPartyPromises = checkedUsersArr.map(userId => 
-            axios.post(makeFullUrl(`/parties/adduser`), {userId, partyId: props.partyId})
-        );
-        const addedPartyUsers = await Promise.all(addUserToPartyPromises);
-        return (addedPartyUsers.map(pu => pu.data));
-    }
-
     const onSave = () => {
         setSavingView(true);
         const checkedUsersIds = Array.from(checkedUsers);

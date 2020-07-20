@@ -1,55 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { Button, Icon, ListItem } from 'react-native-elements';
-import listStyles from '../../styles';
+import { StyleSheet, View } from 'react-native';
 import makeFullUrl from '../../utils';
 import AddPaymentOverlay from './add_payment_overlay';
 import AddUsersOverlay from './add_users_overlay';
-import PartyPaymentsList from './party_payments_list';
-
-const PartyUsersList = (props) => {
-
-    const renderUserItem = ({item}) => {
-        return (
-            <ListItem 
-                title={item.name}
-                subtitle={item.email}
-                leftAvatar={{
-                    source: require('../../src_files/default-avatar.png'),
-                    rounded: true
-                }}
-            />
-        )
-    }
-
-    return (
-        <FlatList
-            style={[listStyles.block, props.style]}
-            data={props.users}
-            renderItem={renderUserItem}
-            keyExtractor={user => user._id}
-        />
-    )
-}
-
-const PartyButton = (props) => {
-    return(
-        <Button 
-            style={style.button}
-            titleStyle={style.buttonTitle}
-            icon={<Icon
-                style={style.buttonTitle}
-                name={props.iconName}
-                color="grey"
-                size={40}
-            />}
-            title={props.title}
-            type="clear"
-            onPress={props.onPress}
-        />
-    )
-}
+import { PartyPaymentsList } from './party_payments_list';
+import PartyUsersList from './party_users_list';
+import DebtsOverlay from './debts_overlay';
 
 const PartyReviewView = (props) => {
 
@@ -60,6 +17,7 @@ const PartyReviewView = (props) => {
     const [payments, setPayments] = useState([]);
     const [isAddUsersVisible, setAddUsersVisible] = useState(false);
     const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
+    const [isDebtsVisible, setDebtsVisible] = useState(true);
     
     useEffect(() => {
         axios.get(makeFullUrl(`/users/by_party/${party._id}`))
@@ -70,10 +28,10 @@ const PartyReviewView = (props) => {
 
         axios.get(makeFullUrl(`/payments/by_party/${party._id}`))
             .then(response => {
-                setPayments(response.data);
-                console.log(response.data);
+                setPayments(response.data.sort(
+                    (a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)
+                ));
             })
-            .catch(err => console.log(err));
     }, []);
 
     const addUsersToList = (newUsers) => {
@@ -86,25 +44,15 @@ const PartyReviewView = (props) => {
     return (
         <View style={style.container}>
             <View>
-                <PartyButton 
-                    title="Add user"
-                    iconName="add"
-                    onPress={() => setAddUsersVisible(true)}
-                /> 
-                <PartyButton 
-                    title="Add payment"
-                    iconName="add"
-                    onPress={() => setAddPaymentVisible(true)}
-                /> 
-            </View>
-            <View>
                 <PartyPaymentsList 
                     payments={payments}
                     user={user}
+                    onAdd={() => setAddPaymentVisible(true)}
                 />
                 <PartyUsersList 
                     style={{ paddingVertical: 16 }} 
                     users={users}
+                    onAdd={() => setAddUsersVisible(true)}
                 />
             </View>
             <AddUsersOverlay
@@ -121,6 +69,13 @@ const PartyReviewView = (props) => {
                 partyId={party._id}
                 partyUsers={users}
                 defaultUserId={user._id}
+            />
+            <DebtsOverlay
+                isVisible={isDebtsVisible}
+                onClose={() => setDebtsVisible(false)}
+                partyId={party._id}
+                users={users}
+                payments={payments}
             />
         </View>
     )

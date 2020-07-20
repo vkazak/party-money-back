@@ -1,7 +1,7 @@
 import { Overlay, Button, Icon } from 'react-native-elements';
 import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
 import React from 'react';
-const { MAIN_COLOR, APP_GREEN, APP_RED } = require("../styles");
+const { MAIN_COLOR, APP_GREEN, APP_RED, APP_COLOR } = require("../styles");
 
 const IndicatorScreen = (props) => {
     let showLoading = props.showSavingView && !(props.showDoneView || props.showErrorView);
@@ -9,7 +9,7 @@ const IndicatorScreen = (props) => {
         <View style={props.showSavingView ? style.savingView : style.hidden}>
             <ActivityIndicator
                 size="large"
-                color={MAIN_COLOR}
+                color={APP_COLOR}
                 style={showLoading ? style.indicator : style.hidden}
                 animating={showLoading}
             />
@@ -45,8 +45,8 @@ const PMBOverlay = (props) => {
                 <View>
                     <View style={style.content}>{props.children}</View>
                     <View style={style.footer}>
-                        <Button style={style.button} title="Cancel" type="outline" onPress={props.onClose}/>
-                        <Button style={style.button} title={saveTitle} onPress={props.onSave}/>
+                        <Button style={style.button} buttonStyle={{color: APP_COLOR}} title="Cancel" type="outline" onPress={props.onClose}/>
+                        <Button style={style.button} buttonStyle={{backgroundColor: APP_COLOR}} color={APP_COLOR} title={saveTitle} onPress={props.onSave}/>
                     </View> 
                     <IndicatorScreen 
                         showSavingView={props.showSavingView}
@@ -70,12 +70,13 @@ const style = StyleSheet.create({
         marginLeft: 20,
         marginVertical: 20,
         fontWeight: "300",
-        fontSize: 18
+        fontSize: 18,
+        color: 'white'
     },
     header: {
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
-        backgroundColor: MAIN_COLOR,
+        backgroundColor: APP_COLOR,
         width: "100%",
         height: 60,
     },

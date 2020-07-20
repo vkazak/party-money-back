@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, ScrollView } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 import makeFullUrl from '../../utils';
-import commonStyles, { MAIN_COLOR } from '../../styles';
+import commonStyles, { MAIN_COLOR, APP_COLOR } from '../../styles';
 import AddPartyOverlay from './add_party_overlay';
 
 const PartiesListView = (props) => {
@@ -40,13 +40,14 @@ const PartiesListView = (props) => {
     }
 
     return(
-        <View style={{flex: 1}}>
-            <FlatList 
-                style={commonStyles.block}
-                data={parties}
-                renderItem={renderPartyItem}
-                keyExtractor={party => party._id}
-            />
+        <View style={{backgroundColor: APP_COLOR, flex: 1}}>
+            <ScrollView style={commonStyles.block}>
+                <View style={{borderRadius: 15, overflow: 'hidden',}}>
+                    {parties.map(party => {
+                        return(renderPartyItem({item: party}))
+                    })}
+                </View>
+            </ScrollView>
             <Icon 
                 containerStyle={commonStyles.floatingIconButton}
                 name='add'
@@ -63,5 +64,10 @@ const PartiesListView = (props) => {
         </View>
     )
 }
-
+/*<FlatList 
+                style={commonStyles.block}
+                data={parties}
+                renderItem={renderPartyItem}
+                keyExtractor={party => party._id}
+            />*/
 export default PartiesListView;
