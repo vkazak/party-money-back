@@ -14,7 +14,7 @@ export const BodyContainer = (props) => {
 
 export const ListContainer = (props) => {
     return( 
-        <ScrollView style={commonStyles.block}>
+        <ScrollView style={[commonStyles.block, props.style]}>
             <View style={styles.listContainer}>
                 {props.children}
             </View>

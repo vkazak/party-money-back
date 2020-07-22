@@ -3,10 +3,11 @@ import axios from 'axios';
 import { makeFullUrl } from '../../utils';
 import { FlatList, View, StyleSheet, Text } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
-import commonStyles, { APP_GREEN, APP_FONT, APP_FONT_SEMIBOLD, APP_COLOR, APP_FONT_BOLD } from '../../styles';
+import commonStyles, { APP_GREEN, APP_FONT, APP_FONT_SEMIBOLD, APP_COLOR, APP_FONT_BOLD, APP_BLUE } from '../../styles';
 import PMBDivider from '../../components/pmb_divider';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
 import AddPaymentOverlay from './add_payment_overlay';
+import DebtsOverlay from './debts_overlay';
 
 
 const PaymentCard = (props) => {
@@ -47,7 +48,9 @@ const PaymentCard = (props) => {
 const PartyPaymentsView = (props) => {
 
     const [payments, setPayments] = useState([]);
+    const [users, setUsers] = useState([]);
     const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
+    const [isDebtsVisible, setDebtsVisible] = useState(false);
 
     const currentUser = props.route.params.user;
     const party = props.route.params.party;
@@ -59,6 +62,11 @@ const PartyPaymentsView = (props) => {
                     (a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)
                 ));
             })
+        axios.get(makeFullUrl(`/users/by_party/${party._id}`))
+            .then(response => {
+                setUsers(response.data);
+            })
+            .catch(err => console.log(err));
     }, []);
 
     const addPaymentToList = (payment) => {
@@ -76,7 +84,16 @@ const PartyPaymentsView = (props) => {
 
     return (
         <BodyContainer>
-            <ListContainer>
+            <View style={style.debtButtonBox}>
+                <Button
+                    title='Show summary'
+                    titleStyle={style.debtButtonTitle}
+                    buttonStyle={style.debtButton}
+                    onPress={() => setDebtsVisible(true)}
+                    raised
+                />
+            </View>
+            <ListContainer style={{marginTop: 60}}>
                 {payments.map(item => renderPaymentItem({item}))}
             </ListContainer>
             <Icon 
@@ -91,8 +108,16 @@ const PartyPaymentsView = (props) => {
                 addPaymentToList={addPaymentToList}
                 onClose={() => setAddPaymentVisible(false)}
                 partyId={party._id}
-                partyUsers={[]} //TODO
+                partyUsers={users}
                 defaultUserId={currentUser._id}
+            />
+            <DebtsOverlay
+                isVisible={isDebtsVisible}
+                onClose={() => setDebtsVisible(false)}
+                partyId={party._id}
+                users={users}
+                payments={payments}
+                currentUser={currentUser}
             />
         </BodyContainer>
     )
@@ -106,6 +131,22 @@ const style = StyleSheet.create({
         width: '100%',
         borderRadius: 15,
         padding: 8
+    },
+    debtButtonBox: {
+        position: 'absolute',
+        opacity: 0.7,
+        width: '100%',
+        top: 8,
+        paddingHorizontal: 16,
+        zIndex: 1,
+    },
+    debtButton: {
+        backgroundColor: APP_GREEN,
+        height: 60,
+        borderRadius: 30,
+    },
+    debtButtonTitle: {
+        fontFamily: APP_FONT
     },
     leftBox: {
         flex: 1,
