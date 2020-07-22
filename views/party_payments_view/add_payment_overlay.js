@@ -35,6 +35,7 @@ const AddPaymentOverlay = (props) => {
         )
             .then(response => {
                 const payment = response.data;
+                payment.user = props.partyUsers.find(user => user._id == payment.user);
                 props.addPaymentToList(payment);
                 setDoneView(true);
             })
