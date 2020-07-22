@@ -1,15 +1,15 @@
-import 'react-native-gesture-handler';
-import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Text } from 'react-native';
-import UsersListView from './views/users_view';
-import PartiesListView from './views/parties_view/parties_view';
-import PartyReviewView from './views/party_review_view/party_review_view';
-import PartyPaymentsView from './views/party_payments_view/party_payments_view';
-import PartyUsersView from './views/party_users_view/party_users_view';
-import { APP_COLOR, APP_FONT, APP_FONT_BOLD } from './styles';
 import { loadAsync } from 'expo-font';
+import React, { useEffect, useState } from 'react';
+import { Text } from 'react-native';
+import 'react-native-gesture-handler';
+import { APP_COLOR, APP_FONT_BOLD } from './styles';
+import PartiesListView from './views/parties_view/parties_view';
+import PartyPaymentsView from './views/party_payments_view/party_payments_view';
+import PartyReviewView from './views/party_review_view';
+import PartyUsersView from './views/party_users_view/party_users_view';
+import UsersListView from './views/users_view';
 
 const Stack = createStackNavigator();
 

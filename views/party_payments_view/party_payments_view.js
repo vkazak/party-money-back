@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { makeFullUrl } from '../../utils';
-import { FlatList, View, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
-import commonStyles, { APP_GREEN, APP_FONT, APP_FONT_SEMIBOLD, APP_COLOR, APP_FONT_BOLD, APP_BLUE } from '../../styles';
-import PMBDivider from '../../components/pmb_divider';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
+import PMBDivider from '../../components/pmb_divider';
+import commonStyles, { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
+import { makeFullUrl } from '../../utils';
 import AddPaymentOverlay from './add_payment_overlay';
 import DebtsOverlay from './debts_overlay';
 

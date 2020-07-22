@@ -1,11 +1,9 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import makeFullUrl from '../../utils';
-import { BodyContainer } from '../../components/component_containers';
-import TouchableScale from 'react-native-touchable-scale';
 import { Icon } from 'react-native-elements';
-import listStyles, { APP_COLOR, APP_GREEN, APP_RED, APP_BLUE } from '../../styles';
+import TouchableScale from 'react-native-touchable-scale';
+import { BodyContainer } from '../components/component_containers';
+import listStyles, { APP_BLUE, APP_GREEN } from '../styles';
 
 const PartyCard = (props) => {
 

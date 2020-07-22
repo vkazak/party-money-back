@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FlatList, View } from 'react-native';
-import { ListItem, Icon } from 'react-native-elements';
-import commonStyles, { APP_COLOR } from '../../styles';
-import AddUsersOverlay from './add_users_overlay';
-import makeFullUrl from '../../utils';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { Icon, ListItem } from 'react-native-elements';
 import { BodyContainer } from '../../components/component_containers';
+import commonStyles, { APP_COLOR } from '../../styles';
+import makeFullUrl from '../../utils';
+import AddUsersOverlay from './add_users_overlay';
 
 const PartyUsersList = (props) => {
 

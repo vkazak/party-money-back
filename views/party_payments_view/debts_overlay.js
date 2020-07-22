@@ -1,12 +1,11 @@
 import axios from 'axios';
-import React, { useEffect, useState} from 'react';
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
-import PMBOverlay from '../../components/pmb_overlay';
-import makeFullUrl from '../../utils';
-import listStyles, { APP_GREEN, APP_COLOR, APP_RED, APP_FONT_BOLD, APP_FONT, APP_FONT_SEMIBOLD } from '../../styles';
 import PMBDivider from '../../components/pmb_divider';
-import PMBUser from '../../components/pmb_user';
+import PMBOverlay from '../../components/pmb_overlay';
+import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
+import makeFullUrl from '../../utils';
 
 const AmountInfo = (props) => {
     return (

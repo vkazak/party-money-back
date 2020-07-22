@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, ScrollView, StyleSheet } from 'react-native';
-import { Icon, ListItem, Button } from 'react-native-elements';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { Icon, ListItem } from 'react-native-elements';
 import makeFullUrl from '../../utils';
-import commonStyles, { MAIN_COLOR, APP_COLOR, APP_FONT } from '../../styles';
+import commonStyles, { APP_COLOR, APP_FONT } from '../../styles';
 import AddPartyOverlay from './add_party_overlay';
 import { BodyContainer } from '../../components/component_containers';
 
