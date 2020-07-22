@@ -1,10 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState} from 'react';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { Avatar, Icon } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 import makeFullUrl from '../../utils';
-import listStyles, { APP_GREEN, APP_COLOR, APP_RED } from '../../styles';
+import listStyles, { APP_GREEN, APP_COLOR, APP_RED, APP_FONT_BOLD, APP_FONT, APP_FONT_SEMIBOLD } from '../../styles';
 import PMBDivider from '../../components/pmb_divider';
 import PMBUser from '../../components/pmb_user';
 
@@ -26,13 +26,13 @@ const amountInfoStyle = StyleSheet.create({
     },
     title: {
         fontSize: 15,
-        fontWeight: '300',
-        opacity: 0.5
+        fontFamily: APP_FONT,
+        opacity: 0.4
     },
     amount: {
         color: APP_COLOR,
-        fontSize: 30,
-        fontWeight: '700'
+        fontFamily: APP_FONT_BOLD,
+        fontSize: 30
     }
 });
 
@@ -50,44 +50,65 @@ const DebtItem = (props) => {
     }
     const backgroundColor = itemColor + opacity;
 
+    const UserBlock = (props) => {
+
+        return (
+            <View style={debtStyle.usersBlock}>
+                <Avatar 
+                    source={require('../../src_files/default-avatar.png')}
+                    size={35}
+                    rounded
+                />
+                <Text style={debtStyle.userName}>{props.user.name}</Text>
+            </View>
+        )
+    }
+
     return (
         <View style={[debtStyle.container, {backgroundColor: backgroundColor}]}>
-            <View style={debtStyle.usersBlock}>
-                <PMBUser user={debt.from} />
-                <PMBUser user={debt.to} />
-            </View>
-            
+            <UserBlock user={debt.from} />
             <View style={debtStyle.amountBlock}>
                 <Text style={[debtStyle.amount, {color: itemColor}]}>{debt.amount.toFixed(1)}</Text>
+                <Icon 
+                    name='md-arrow-forward'
+                    type='ionicon'
+                    color={itemColor}
+                />
             </View>
+            <UserBlock user={debt.to} />
         </View>
     )
 }
 
 const debtStyle = StyleSheet.create({
     container: {
-        height: 60,
+        minHeight: 80,
+        maxHeight: 80,
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingLeft: 10,
         marginVertical: 5,
         borderRadius: 15,
-        paddingVertical: 5
     },
     usersBlock: {
-        flex: 0.75,
-        flexDirection: 'column',
+        flex: 0.3,
         justifyContent: 'center',
+        alignItems: 'center',
+    },
+    userName: {
+        fontFamily: APP_FONT_SEMIBOLD,
+        fontSize: 14,
+        opacity: 0.5
     },
     amountBlock: {
-        flex: 0.25,
+        flex: 0.4,
         justifyContent: 'center',
+        alignItems: 'center'
     },
     amount: {
         opacity: 0.9,
         fontSize: 20,
-        fontWeight: '700'
+        fontFamily: APP_FONT_BOLD
     }
 });
 
