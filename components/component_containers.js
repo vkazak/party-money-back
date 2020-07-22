@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import commonStyles from '../styles';
 
 
@@ -13,17 +13,19 @@ export const BodyContainer = (props) => {
 }
 
 export const ListContainer = (props) => {
-    <ScrollView style={commonStyles.block}>
-        <View style={styles.listContainer}>
-            {props.children}
-        </View>
-    </ScrollView>
+    return( 
+        <ScrollView style={commonStyles.block}>
+            <View style={styles.listContainer}>
+                {props.children}
+            </View>
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
     bodyContainer: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: 'white'
     },
     listContainer: {
         borderRadius: 15, 

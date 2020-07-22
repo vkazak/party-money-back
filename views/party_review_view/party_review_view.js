@@ -2,103 +2,70 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import makeFullUrl from '../../utils';
-import AddPaymentOverlay from './add_payment_overlay';
-import AddUsersOverlay from './add_users_overlay';
-import { PartyPaymentsList } from './party_payments_list';
-import PartyUsersList from './party_users_list';
-import DebtsOverlay from './debts_overlay';
 import { BodyContainer } from '../../components/component_containers';
+import TouchableScale from 'react-native-touchable-scale';
+import { Icon } from 'react-native-elements';
+import listStyles, { APP_COLOR, APP_GREEN, APP_RED, APP_BLUE } from '../../styles';
+
+const PartyCard = (props) => {
+
+    return(
+        <View style={[{flex: 0.5}, listStyles.block]}>
+            <TouchableScale
+                style={[cardStyle.container, {backgroundColor: props.backgroundColor}]}
+                tension={20}
+                friction={5}
+                onPress={props.onPress}
+            >
+                
+                <View >
+                    <Icon
+                        name={props.iconName}
+                        size='100'
+                        color='white'
+                        type={props.iconType}
+                    />
+                </View>
+            </TouchableScale>
+        </View>
+    )
+}
+
+const cardStyle = StyleSheet.create({
+    container: {
+        flex: 1, 
+        borderRadius: 15, 
+        justifyContent: 'center', 
+        alignItems: 'center'
+    }
+})
 
 const PartyReviewView = (props) => {
-
-    const party = props.route.params.party;
     const user = props.route.params.user;
-    
-    const [users, setUsers] = useState([]);
-    const [payments, setPayments] = useState([]);
-    const [isAddUsersVisible, setAddUsersVisible] = useState(false);
-    const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
-    const [isDebtsVisible, setDebtsVisible] = useState(true);
-    
-    useEffect(() => {
-        axios.get(makeFullUrl(`/users/by_party/${party._id}`))
-            .then(response => {
-                setUsers(response.data);
-            })
-            .catch(err => console.log(err));
+    const party = props.route.params.party;
 
-        axios.get(makeFullUrl(`/payments/by_party/${party._id}`))
-            .then(response => {
-                setPayments(response.data.sort(
-                    (a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)
-                ));
-            })
-    }, []);
-
-    const addUsersToList = (newUsers) => {
-        setUsers(users.slice().concat(newUsers))
-    }
-    const addPaymentToList = (payment) => {
-        setPayments([payment].concat(payments));
-    }
-
-    return (
+    const onPressPayments = () => {
+        props.navigation.navigate("Party payments", {party, user})
+    };
+    const onPressUsers = () => {
+        props.navigation.navigate("Users in party", {party, user})
+    };
+    return(
         <BodyContainer>
-            <View>
-                <PartyPaymentsList 
-                    payments={payments}
-                    user={user}
-                    onAdd={() => setAddPaymentVisible(true)}
-                />
-                <PartyUsersList 
-                    style={{ paddingVertical: 16 }} 
-                    users={users}
-                    onAdd={() => setAddUsersVisible(true)}
-                />
-            </View>
-            <AddUsersOverlay
-                isVisible={isAddUsersVisible}
-                partyUsers={users}
-                addUsersToList={addUsersToList}
-                onClose={() => setAddUsersVisible(false)}
-                partyId={party._id}
+            <PartyCard
+                backgroundColor={APP_GREEN}
+                iconName='wallet'
+                iconType='simple-line-icon'
+                onPress={onPressPayments} 
             />
-            <AddPaymentOverlay
-                isVisible={isAddPaymentVisible}
-                addPaymentToList={addPaymentToList}
-                onClose={() => setAddPaymentVisible(false)}
-                partyId={party._id}
-                partyUsers={users}
-                defaultUserId={user._id}
-            />
-            <DebtsOverlay
-                isVisible={isDebtsVisible}
-                onClose={() => setDebtsVisible(false)}
-                partyId={party._id}
-                users={users}
-                payments={payments}
-                currentUser={user}
+            <PartyCard 
+                backgroundColor={APP_BLUE}
+                iconName='people'
+                iconType='simple-line-icon'
+                onPress={onPressUsers}
             />
         </BodyContainer>
     )
 }
-
-const style = StyleSheet.create({
-    button: {
-        height: 60,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    buttonTitle: {
-        textAlign: "right",
-        color: "grey",
-        fontWeight: "500",
-        shadowColor: "grey",
-        shadowOpacity: 0.9,
-        shadowRadius: 2,
-        shadowOffset: {width: 0, height: 0},
-        opacity: 0.5
-    }
-});
 
 export default PartyReviewView;

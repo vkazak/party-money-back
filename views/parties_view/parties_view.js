@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, ScrollView} from 'react-native';
+import { FlatList, View, ScrollView, StyleSheet } from 'react-native';
 import { Icon, ListItem, Button } from 'react-native-elements';
 import makeFullUrl from '../../utils';
-import commonStyles, { MAIN_COLOR, APP_COLOR } from '../../styles';
+import commonStyles, { MAIN_COLOR, APP_COLOR, APP_FONT } from '../../styles';
 import AddPartyOverlay from './add_party_overlay';
 import { BodyContainer } from '../../components/component_containers';
 
@@ -30,8 +30,9 @@ const PartiesListView = (props) => {
         return(
             <ListItem 
                 title={item.name}
+                titleStyle={style.itemTitle}
                 subtitle={`${item.users.length} user${item.users.length > 1 ? 's' : ''}`}
-                subtitleStyle={{opacity: 0.3, fontSize: 13}}
+                subtitleStyle={style.itemSubtitle}
                 onPress={onPress}
                 leftIcon={{
                     name: 'ios-beer',
@@ -73,5 +74,16 @@ const PartiesListView = (props) => {
         </BodyContainer>
     )
 }
+
+const style = StyleSheet.create({
+    itemTitle: {
+        fontFamily: APP_FONT
+    },
+    itemSubtitle: {
+        fontFamily: APP_FONT,
+        opacity: 0.4, 
+        fontSize: 13
+    }
+});
 
 export default PartiesListView;
