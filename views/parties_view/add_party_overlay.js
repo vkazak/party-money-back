@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import makeFullUrl from '../../utils';
+import { makeFullUrl } from '../../utils';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 
@@ -29,7 +29,7 @@ const AddPartyOverlay = (props) => {
                     party = response.data;
                     party.users = [props.userId];
                     const request = {partyId: party._id, usersIds: [props.userId]};
-                    return (axios.post(makeFullUrl(`/parties/addusers`), request))
+                    return (axios.post(makeFullUrl(`/parties/addmembers`), request))
                 })
                 .then(() => {
                     setDoneView(true);

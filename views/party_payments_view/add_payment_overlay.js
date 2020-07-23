@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
-import makeFullUrl from '../../utils';
+import { makeFullUrl } from '../../utils';
 
 const AddPaymentOverlay = (props) => {
     const [userId, setUserId] = useState(props.defaultUserId);

@@ -5,7 +5,7 @@ import { Avatar, Icon } from 'react-native-elements';
 import PMBDivider from '../../components/pmb_divider';
 import PMBOverlay from '../../components/pmb_overlay';
 import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
-import makeFullUrl from '../../utils';
+import { makeFullUrl} from '../../utils';
 
 const AmountInfo = (props) => {
     return (

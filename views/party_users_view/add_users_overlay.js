@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
-import makeFullUrl from '../../utils';
+import { makeFullUrl } from '../../utils';
 
 const UserAndCheckBoxItem = (props) => {
     const [checked, setChecked] = useState(false);

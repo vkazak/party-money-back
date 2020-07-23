@@ -3,13 +3,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { loadAsync } from 'expo-font';
 import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
-import 'react-native-gesture-handler';
 import { APP_COLOR, APP_FONT_BOLD } from './styles';
 import PartiesListView from './views/parties_view/parties_view';
 import PartyPaymentsView from './views/party_payments_view/party_payments_view';
 import PartyReviewView from './views/party_review_view';
 import PartyUsersView from './views/party_users_view/party_users_view';
 import UsersListView from './views/users_view';
+import LoginView from './views/login_view';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +30,11 @@ export default function App() {
         return (
             <NavigationContainer>
                 <Stack.Navigator screenOptions={navigatorStyle}>
+                    <Stack.Screen
+                        name='Login'
+                        component={LoginView}
+                        options={{headerShown: false}}
+                    />
                     <Stack.Screen
                         name="Users list"
                         component={UsersListView}

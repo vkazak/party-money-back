@@ -1,4 +1,5 @@
 {
     "serverUri" : "http://192.168.100.3:3000",
+    "avatarUrl" : "/avatar.jpeg",
     "_serverUri" : "https://blooming-meadow-04056.herokuapp.com"
 }

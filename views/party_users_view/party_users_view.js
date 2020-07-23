@@ -4,12 +4,13 @@ import { View } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 import { BodyContainer } from '../../components/component_containers';
 import commonStyles, { APP_COLOR } from '../../styles';
-import makeFullUrl from '../../utils';
+import { makeFullUrl } from '../../utils';
 import AddUsersOverlay from './add_users_overlay';
 
 const PartyUsersList = (props) => {
 
     const [users, setUsers] = useState([]);
+    const [dummies, setDummies] = useState([]);
     const [isAddUsersVisible, setAddUsersVisible] = useState(false);
 
     const currentUser = props.route.params.user;
@@ -19,6 +20,11 @@ const PartyUsersList = (props) => {
         axios.get(makeFullUrl(`/users/by_party/${party._id}`))
             .then(response => {
                 setUsers(response.data);
+            })
+            .catch(err => console.log(err));
+        axios.get(makeFullUrl(`/dummies/by_party/${party._id}`))
+            .then(response => {
+                setDummies(response.data);
             })
             .catch(err => console.log(err));
     }, []);
@@ -33,7 +39,7 @@ const PartyUsersList = (props) => {
                 title={item.name}
                 subtitle={item.email}
                 leftAvatar={{
-                    source: require('../../src_files/default-avatar.png'),
+                    source: { url: item.photoUrl },
                     rounded: true
                 }}
                 subtitleStyle={{opacity: 0.5, fontSize: 13}}
@@ -44,7 +50,7 @@ const PartyUsersList = (props) => {
     return (
         <BodyContainer>
             <View style={commonStyles.block}>
-                <View style={{borderRadius: 15, overflow: 'hidden',}}>
+                <View style={{borderRadius: 15, overflow: 'hidden'}}>
                     {users.map(user => {
                         return(renderUserItem({item: user}))
                     })}
