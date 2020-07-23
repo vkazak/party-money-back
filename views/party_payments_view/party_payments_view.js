@@ -5,13 +5,16 @@ import { Avatar, Button, Icon } from 'react-native-elements';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
 import PMBDivider from '../../components/pmb_divider';
 import commonStyles, { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
-import { makeFullUrl } from '../../utils';
+import { makeFullUrl, dummyToUser } from '../../utils';
 import AddPaymentOverlay from './add_payment_overlay';
 import DebtsOverlay from './debts_overlay';
 
 
 const PaymentCard = (props) => {
-    const payment = props.payment;
+    const payment = { ...props.payment };
+    if (!payment.user) {
+        payment.user = dummyToUser(payment.dummy);
+    }
     const isDefaultUser = payment.user._id == props.currentUserId;
 
     const cardColor = isDefaultUser ? APP_GREEN : '#ffffff';
@@ -26,7 +29,7 @@ const PaymentCard = (props) => {
                 <View style={style.leftBox}>
                     <View style={style.userBox}>
                         <Avatar 
-                            source={require('../../src_files/default-avatar.png')}
+                            source={{ url: payment.user.photoUrl }}
                             size={40}
                             rounded
                         />
@@ -49,6 +52,7 @@ const PartyPaymentsView = (props) => {
 
     const [payments, setPayments] = useState([]);
     const [users, setUsers] = useState([]);
+    const [dummies, setDummies] = useState([]);
     const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
     const [isDebtsVisible, setDebtsVisible] = useState(false);
 
@@ -65,6 +69,11 @@ const PartyPaymentsView = (props) => {
         axios.get(makeFullUrl(`/users/by_party/${party._id}`))
             .then(response => {
                 setUsers(response.data);
+            })
+            .catch(err => console.log(err));
+        axios.get(makeFullUrl(`/dummies/by_party/${party._id}`))
+            .then(response => {
+                setDummies(response.data);
             })
             .catch(err => console.log(err));
     }, []);
@@ -109,6 +118,7 @@ const PartyPaymentsView = (props) => {
                 onClose={() => setAddPaymentVisible(false)}
                 partyId={party._id}
                 partyUsers={users}
+                partyDummies={dummies}
                 defaultUserId={currentUser._id}
             />
             <DebtsOverlay
@@ -116,6 +126,7 @@ const PartyPaymentsView = (props) => {
                 onClose={() => setDebtsVisible(false)}
                 partyId={party._id}
                 users={users}
+                dummies={dummies}
                 payments={payments}
                 currentUser={currentUser}
             />

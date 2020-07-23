@@ -5,7 +5,7 @@ import { Avatar, Icon } from 'react-native-elements';
 import PMBDivider from '../../components/pmb_divider';
 import PMBOverlay from '../../components/pmb_overlay';
 import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
-import { makeFullUrl} from '../../utils';
+import { makeFullUrl, dummyToUser} from '../../utils';
 
 const AmountInfo = (props) => {
     return (
@@ -54,7 +54,7 @@ const DebtItem = (props) => {
         return (
             <View style={debtStyle.usersBlock}>
                 <Avatar 
-                    source={require('../../src_files/default-avatar.png')}
+                    source={{ url: props.user.photoUrl }}
                     size={35}
                     rounded
                 />
@@ -82,11 +82,12 @@ const DebtItem = (props) => {
 const debtStyle = StyleSheet.create({
     container: {
         minHeight: 80,
-        maxHeight: 80,
+        maxHeight: 100,
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         marginVertical: 5,
+        padding: 8,
         borderRadius: 15,
     },
     usersBlock: {
@@ -97,7 +98,8 @@ const debtStyle = StyleSheet.create({
     userName: {
         fontFamily: APP_FONT_SEMIBOLD,
         fontSize: 14,
-        opacity: 0.5
+        opacity: 0.5,
+        textAlign: 'center'
     },
     amountBlock: {
         flex: 0.4,
@@ -118,15 +120,23 @@ const DebtsOverlay = (props) => {
     const [debts, setDebts] = useState([]);
 
     const populateDebt = (debt) => {
+        const populateMember = ( {id, isDummy} ) => {
+            if (isDummy) {
+                return dummyToUser(props.dummies.find(dummy => dummy._id == id))
+            }
+            else {
+                return props.users.find(user => user._id == id)
+            }
+        }
         return ({
-            from: props.users.find(user => user._id == debt.from),
-            to: props.users.find(user => user._id == debt.to),
+            from: populateMember(debt.from),
+            to: populateMember(debt.to),
             amount: debt.amount
         })
     }
-    
+
     useEffect(() => {
-        if (props.users.length > 0 && props.payments.length > 0) {
+        if (props.dummies.length > 0 && props.users.length > 0 && props.payments.length > 0) {
             axios.get(makeFullUrl(`/calculate/debts/${props.partyId}`))
                 .then(response => {
                     setSum(Number(response.data.spent).toFixed(1));
@@ -135,7 +145,7 @@ const DebtsOverlay = (props) => {
                 })
                 .catch(err => console.log(err));
         }
-    }, [props.users, props.payments])
+    }, [props.users, props.payments, props.dummies])
 
     const renderDebtItem = ({item}) => {
         return (

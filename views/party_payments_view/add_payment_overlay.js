@@ -7,7 +7,7 @@ import PMBOverlay from '../../components/pmb_overlay';
 import { makeFullUrl } from '../../utils';
 
 const AddPaymentOverlay = (props) => {
-    const [userId, setUserId] = useState(props.defaultUserId);
+    const [pickedUserId, setUserId] = useState(props.defaultUserId);
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState(0);
     const [showSavingView, setSavingView] = useState(false);
@@ -30,11 +30,20 @@ const AddPaymentOverlay = (props) => {
 
     const onSave = () => {
         setSavingView(true);
+        let userId, dummyId;
+        if (props.partyUsers.some(user => user._id == pickedUserId)) {
+            userId = pickedUserId
+        }
+        else {
+            dummyId = pickedUserId
+        }
+
         axios.post(makeFullUrl(`/payments/add`), 
-            {userId, partyId: props.partyId, description, amount}
+            {userId, dummyId, partyId: props.partyId, description, amount}
         )
             .then(response => {
                 const payment = response.data;
+                payment.dummy = props.partyDummies.find(dummy => dummy._id == payment.dummy);
                 payment.user = props.partyUsers.find(user => user._id == payment.user);
                 props.addPaymentToList(payment);
                 setDoneView(true);
@@ -64,7 +73,7 @@ const AddPaymentOverlay = (props) => {
             <View>
                 <Picker 
                     mode='dropdown'
-                    selectedValue={userId}
+                    selectedValue={pickedUserId}
                     onValueChange={(userId, itemIndex) =>
                         setUserId(userId)
                     }
@@ -75,6 +84,13 @@ const AddPaymentOverlay = (props) => {
                                 <Picker.Item label={user.name} value={user._id} key={user._id}/>
                             )
                         })
+                            .concat(
+                                props.partyDummies.map((dummy) => {
+                                    return(
+                                        <Picker.Item label={dummy.name} value={dummy._id} key={dummy._id}/>
+                                    )
+                                })
+                            )
                     }
                 </Picker>
                 <Input
