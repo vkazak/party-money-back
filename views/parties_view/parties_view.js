@@ -27,11 +27,12 @@ const PartiesListView = (props) => {
         const onPress = () => {
             props.navigation.navigate("Party review", {party: item, user})
         };
+        const numberOfMembers = item.users.length + item.dummies.length;
         return(
             <ListItem 
                 title={item.name}
                 titleStyle={style.itemTitle}
-                subtitle={`${item.users.length} user${item.users.length > 1 ? 's' : ''}`}
+                subtitle={`${numberOfMembers} member${numberOfMembers == 1 ? '' : 's'}`}
                 subtitleStyle={style.itemSubtitle}
                 onPress={onPress}
                 leftIcon={{

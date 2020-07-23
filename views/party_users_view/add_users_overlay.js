@@ -31,11 +31,13 @@ const UserAndCheckBoxItem = (props) => {
 
 const AddUsersOverlay = (props) => {
     const [users, setUsers] = useState([]);
+    const [dummies, setDummies] = useState([]);
     const [showSavingView, setSavingView] = useState(false);
     const [showDoneView, setDoneView] = useState(false);
     const [showErrorView, setErrorView] = useState(false);
 
     const checkedUsers = new Set();
+    const checkedDummies = new Set();
 
     const clearStates = () => {
         setSavingView(false);
@@ -54,7 +56,16 @@ const AddUsersOverlay = (props) => {
                 setUsers(usersNotInParty);
             })
             .catch(err => console.log(err));
-    }, [props.partyUsers]);
+        axios.get(makeFullUrl(`/dummies/by_user/${props.currentUserId}`))
+            .then(response => {
+                const usersDummies = response.data;
+                const filterFn = (dummy) => 
+                    !props.partyDummies.some(partyDummy => partyDummy._id == dummy._id);
+                const dummiesNotInParty = usersDummies.filter(filterFn);
+                setDummies(dummiesNotInParty);
+            })
+            .catch(err => console.log(err));
+    }, [props.partyUsers, props.partyDummies]);
 
     const onClose = () => {
         props.onClose();
@@ -64,15 +75,21 @@ const AddUsersOverlay = (props) => {
     const onSave = () => {
         setSavingView(true);
         const checkedUsersIds = Array.from(checkedUsers);
+        const checkedDummiesIds = Array.from(checkedDummies);
+
         axios.post(
-            makeFullUrl(`/parties/addusers`), 
-            {usersIds : checkedUsersIds, partyId: props.partyId}
+            makeFullUrl(`/parties/addmembers`), 
+            {usersIds : checkedUsersIds, dummiesIds: checkedDummiesIds, partyId: props.partyId}
         )
             .then(() => {
                 const addedUsers = checkedUsersIds.map(userId => 
                     users.find(user => user._id == userId)
                 );
+                const addedDummies = checkedDummiesIds.map(dummyId => 
+                    dummies.find(dummy => dummy._id == dummyId)
+                );
                 props.addUsersToList(addedUsers);
+                props.addDummiesToList(addedDummies);
                 setDoneView(true);
             })
             .catch(err => {
@@ -94,10 +111,18 @@ const AddUsersOverlay = (props) => {
             />
         )
     }
+    const renderDummyItem = ({item}) => {
+        return (
+            <UserAndCheckBoxItem
+                item={item}
+                checkedUsers={checkedDummies}
+            />
+        )
+    }
 
     return(
         <PMBOverlay
-            title='Add users to the party'
+            title='Add members to the party'
             saveTitle='Add'
             isVisible={props.isVisible}
             onClose={onClose}
@@ -112,6 +137,11 @@ const AddUsersOverlay = (props) => {
                     data={users}
                     renderItem={renderUserItem}
                     keyExtractor={user => user._id}
+                />
+                <FlatList
+                    data={dummies}
+                    renderItem={renderDummyItem}
+                    keyExtractor={dummy => dummy._id}
                 />
             </View>
         </PMBOverlay>
