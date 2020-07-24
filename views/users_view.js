@@ -5,17 +5,16 @@ import { ListItem } from 'react-native-elements';
 import { BodyContainer } from '../components/component_containers';
 import commonStyles, { APP_FONT } from '../styles';
 import { makeFullUrl } from '../utils';
+import { User } from '../entities/user.entity';
 
 const UsersListView = (props) => {
 
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        axios.get(makeFullUrl('/users'))
-            .then(response => {
-                setUsers(response.data);
-            })
-            .catch(err => console.log(err));
+        User.getUsers()
+            .then(setUsers)
+            .catch(console.log)
     }, []);
 
     const renderUserItem = ({item}) => {

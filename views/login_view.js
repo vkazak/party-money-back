@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-native-elements';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, AsyncStorage } from 'react-native';
 import * as Google from 'expo-google-app-auth';
 import { makeFullUrl } from '../utils';
+import { User } from '../entities/user.entity';
 
 const config = {
     expoClientId: '260269100580-5m6deds5j5fg0mcktvf6h36ine2ul2m9.apps.googleusercontent.com',
@@ -12,12 +13,9 @@ const config = {
 };
 
 const getAppUserByGoogle = (userInfo, goNext) => {
-    
-    axios.post(makeFullUrl('/users/google_user_upd'), { userInfo })
-        .then(response => {
-            goNext(response.data);
-        })
-        .catch(err => console.log(err));
+    User.getUserByGoogleUserInfo(userInfo)
+        .then(goNext)
+        .catch(console.log)
 }
 
 const signIn = async (goToParties, setSigninInProgress) => {
@@ -34,6 +32,18 @@ const signIn = async (goToParties, setSigninInProgress) => {
     }
 }
 
+const checkExistingAccessTokenAndGo = async () => {
+    try {
+        const accessToken = AsyncStorage.getItem('accessToken');
+        const userId = AsyncStorage.getItem('userId');
+        if (accessToken && userId) {
+            
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 const LoginView = (props) => {
 
     const [isSigninInProgress, setSigninInProgress] = useState(false)
@@ -41,6 +51,10 @@ const LoginView = (props) => {
     const goToParties = (user) => {
         props.navigation.navigate("Parties list", {user})
     }
+
+    useEffect(() => {
+        
+    }, []);
 
     return (
         <View style={style.container}>

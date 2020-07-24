@@ -41,7 +41,7 @@ const cardStyle = StyleSheet.create({
 const PartyReviewView = (props) => {
     const user = props.route.params.user;
     const party = props.route.params.party;
-
+    
     const onPressPayments = () => {
         props.navigation.navigate("Party payments", {party, user})
     };

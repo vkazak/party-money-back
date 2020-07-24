@@ -4,6 +4,7 @@ import { FlatList, View } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 import { makeFullUrl } from '../../utils';
+import { User } from '../../entities/user.entity';
 
 const UserAndCheckBoxItem = (props) => {
     const [checked, setChecked] = useState(false);
@@ -47,24 +48,15 @@ const AddUsersOverlay = (props) => {
     }
 
     useEffect(() => {
-        axios.get(makeFullUrl('/users'))
-            .then(response => {
-                const allUsers = response.data;
-                const filterFn = (user) => 
-                    !props.partyUsers.some(partyUser => partyUser._id == user._id);
-                const usersNotInParty = allUsers.filter(filterFn);
-                setUsers(usersNotInParty);
-            })
-            .catch(err => console.log(err));
-        axios.get(makeFullUrl(`/dummies/by_user/${props.currentUserId}`))
-            .then(response => {
-                const usersDummies = response.data;
-                const filterFn = (dummy) => 
-                    !props.partyDummies.some(partyDummy => partyDummy._id == dummy._id);
-                const dummiesNotInParty = usersDummies.filter(filterFn);
-                setDummies(dummiesNotInParty);
-            })
-            .catch(err => console.log(err));
+        const userOutOfPartyFn = (user) => !props.partyUsers.some(partyUser => partyUser._id == user._id);
+        User.getUsers(userOutOfPartyFn)
+            .then(setUsers)
+            .catch(console.log);
+        
+        const dummyOutOfPartyFn = (dummy) => !props.partyDummies.some(partyDummy => partyDummy._id == dummy._id);
+        props.currentUser.getDummies(dummyOutOfPartyFn)
+            .then(setDummies)
+            .catch(console.log);
     }, [props.partyUsers, props.partyDummies]);
 
     const onClose = () => {

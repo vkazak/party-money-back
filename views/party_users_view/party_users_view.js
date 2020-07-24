@@ -24,7 +24,6 @@ const PartyUsersList = (props) => {
             .catch(err => console.log(err));
         axios.get(makeFullUrl(`/dummies/by_party/${party._id}`))
             .then(response => {
-                console.log(response.data);
                 setDummies(response.data);
             })
             .catch(err => console.log(err));
@@ -89,7 +88,7 @@ const PartyUsersList = (props) => {
                 addDummiesToList={addDummiesToList}
                 onClose={() => setAddUsersVisible(false)}
                 partyId={party._id}
-                currentUserId={currentUser._id}
+                currentUser={currentUser}
             />
         </BodyContainer>
     )
