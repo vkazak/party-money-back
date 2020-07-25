@@ -13,7 +13,6 @@ const PartiesListView = (props) => {
     const [showAddOverlay, setShow] = useState(false);
     
     const loadPartiesForUser = () => {
-        console.log(user);
         user.getPartiesForUser()
             .then(setParties)
             .catch(console.log);

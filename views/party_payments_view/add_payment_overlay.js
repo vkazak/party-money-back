@@ -1,10 +1,9 @@
 import { Picker } from '@react-native-community/picker';
-import axios from 'axios';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
-import { makeFullUrl } from '../../utils';
+import { Payment } from '../../entities/payment.entity';
 
 const AddPaymentOverlay = (props) => {
     const [pickedUserId, setUserId] = useState(props.defaultUserId);
@@ -13,6 +12,9 @@ const AddPaymentOverlay = (props) => {
     const [showSavingView, setSavingView] = useState(false);
     const [showDoneView, setDoneView] = useState(false);
     const [showErrorView, setErrorView] = useState(false);
+
+    const users = props.partyUsers;
+    const party = props.party;
 
     const clearStates = () => {
         setSavingView(false);
@@ -30,22 +32,11 @@ const AddPaymentOverlay = (props) => {
 
     const onSave = () => {
         setSavingView(true);
-        let userId, dummyId;
-        if (props.partyUsers.some(user => user._id == pickedUserId)) {
-            userId = pickedUserId
-        }
-        else {
-            dummyId = pickedUserId
-        }
-
-        axios.post(makeFullUrl(`/payments/add`), 
-            {userId, dummyId, partyId: props.partyId, description, amount}
-        )
-            .then(response => {
-                const payment = response.data;
-                payment.dummy = props.partyDummies.find(dummy => dummy._id == payment.dummy);
-                payment.user = props.partyUsers.find(user => user._id == payment.user);
-                props.addPaymentToList(payment);
+        const user = users.find(user => user._id == pickedUserId);
+        const payment = new Payment({party, user, description, amount});
+        payment.create()
+            .then(payment => {
+                props.updatePayments();
                 setDoneView(true);
             })
             .catch(err => {
@@ -56,7 +47,7 @@ const AddPaymentOverlay = (props) => {
                 setTimeout(() => {
                     onClose()
                 }, 1000);
-            })
+            });
     }
 
     return(
@@ -84,13 +75,6 @@ const AddPaymentOverlay = (props) => {
                                 <Picker.Item label={user.name} value={user._id} key={user._id}/>
                             )
                         })
-                            .concat(
-                                props.partyDummies.map((dummy) => {
-                                    return(
-                                        <Picker.Item label={dummy.name} value={dummy._id} key={dummy._id}/>
-                                    )
-                                })
-                            )
                     }
                 </Picker>
                 <Input

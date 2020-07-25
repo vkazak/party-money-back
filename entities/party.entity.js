@@ -2,6 +2,9 @@ import axios from 'axios';
 import { makeFullUrl } from '../utils';
 import { Dummy } from './dummy.entity';
 import { User } from './user.entity';
+import { Payment } from './payment.entity';
+import { sortByCreatedAt } from './entity.utils';
+import { Debts } from './debts.entity';
 
 export class Party {
     constructor(dbParty) {
@@ -68,5 +71,25 @@ export class Party {
         this.users = this.users.slice().concat(users);
         this.dummies = this.dummies.slice().concat(dummies);
         // be attentive to future bugs here about adding parties for user
+    }
+
+    async addPayment(payment) {
+        this.payments = [payment].concat(this.payments);
+    }
+
+    async getPayments() {
+        if (!this.payments) {
+            const response = await axios.get(makeFullUrl(`/payments/by_party/${this._id}`));
+            const dbPayments = response.data;
+            this.payments = dbPayments.map(dbPayment => new Payment(dbPayment)).sort(sortByCreatedAt);
+        }
+        return this.payments;
+    }
+
+    async getDebts() {
+        const members = await this.getUsersAndDummiesAsUsers();
+        const response = await axios.get(makeFullUrl(`/calculate/debts/${this._id}`));
+        const debts = new Debts(response.data, members);
+        return debts;
     }
 }

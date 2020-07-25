@@ -1,25 +1,20 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
 import PMBDivider from '../../components/pmb_divider';
 import commonStyles, { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
-import { makeFullUrl, dummyToUser } from '../../utils';
 import AddPaymentOverlay from './add_payment_overlay';
 import DebtsOverlay from './debts_overlay';
 
 
 const PaymentCard = (props) => {
-    const payment = { ...props.payment };
-    if (!payment.user) {
-        payment.user = dummyToUser(payment.dummy);
-    }
-    const isDefaultUser = payment.user._id == props.currentUserId;
+    const payment = props.payment;
+    const isCurrentUser = payment.user._id == props.currentUserId;
 
-    const cardColor = isDefaultUser ? APP_GREEN : '#ffffff';
-    const nameColor = isDefaultUser ? 'white' : '#00000090';
-    const amountColor = isDefaultUser ? 'white' : APP_COLOR;
+    const cardColor = isCurrentUser ? APP_GREEN : '#ffffff';
+    const nameColor = isCurrentUser ? 'white' : '#00000090';
+    const amountColor = isCurrentUser ? 'white' : APP_COLOR;
     const cardOpacity = 'a0';
     const backgroundColor = cardColor + cardOpacity;
 
@@ -52,35 +47,27 @@ const PartyPaymentsView = (props) => {
 
     const [payments, setPayments] = useState([]);
     const [users, setUsers] = useState([]);
-    const [dummies, setDummies] = useState([]);
     const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
     const [isDebtsVisible, setDebtsVisible] = useState(false);
 
     const currentUser = props.route.params.user;
     const party = props.route.params.party;
 
-    useEffect(() => {
-        axios.get(makeFullUrl(`/payments/by_party/${party._id}`))
-            .then(response => {
-                setPayments(response.data.sort(
-                    (a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt)
-                ));
-            })
-        axios.get(makeFullUrl(`/users/by_party/${party._id}`))
-            .then(response => {
-                setUsers(response.data);
-            })
-            .catch(err => console.log(err));
-        axios.get(makeFullUrl(`/dummies/by_party/${party._id}`))
-            .then(response => {
-                setDummies(response.data);
-            })
-            .catch(err => console.log(err));
-    }, []);
-
-    const addPaymentToList = (payment) => {
-        setPayments([payment].concat(payments));
+    const loadMembers = () => {
+        party.getUsersAndDummiesAsUsers()
+            .then(setUsers)
+            .catch(console.log);
     }
+    const loadPayments = () => {
+        party.getPayments()
+            .then(setPayments)
+            .catch(console.log);
+    }
+
+    useEffect(() => {
+        loadMembers();
+        loadPayments();
+    }, []);
 
     const renderPaymentItem = ({item}) => {
         return (
@@ -114,20 +101,16 @@ const PartyPaymentsView = (props) => {
             />
             <AddPaymentOverlay
                 isVisible={isAddPaymentVisible}
-                addPaymentToList={addPaymentToList}
+                updatePayments={loadPayments}
                 onClose={() => setAddPaymentVisible(false)}
-                partyId={party._id}
+                party={party}
                 partyUsers={users}
-                partyDummies={dummies}
                 defaultUserId={currentUser._id}
             />
             <DebtsOverlay
                 isVisible={isDebtsVisible}
                 onClose={() => setDebtsVisible(false)}
-                partyId={party._id}
-                users={users}
-                dummies={dummies}
-                payments={payments}
+                party={party}
                 currentUser={currentUser}
             />
         </BodyContainer>

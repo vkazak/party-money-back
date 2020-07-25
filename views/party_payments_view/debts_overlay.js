@@ -1,11 +1,9 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
 import PMBDivider from '../../components/pmb_divider';
 import PMBOverlay from '../../components/pmb_overlay';
 import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
-import { makeFullUrl, dummyToUser} from '../../utils';
 
 const AmountInfo = (props) => {
     return (
@@ -67,7 +65,7 @@ const DebtItem = (props) => {
         <View style={[debtStyle.container, {backgroundColor: backgroundColor}]}>
             <UserBlock user={debt.from} />
             <View style={debtStyle.amountBlock}>
-                <Text style={[debtStyle.amount, {color: itemColor}]}>{debt.amount.toFixed(1)}</Text>
+                <Text style={[debtStyle.amount, {color: itemColor}]}>{debt.amount}</Text>
                 <Icon 
                     name='md-arrow-forward'
                     type='ionicon'
@@ -119,33 +117,20 @@ const DebtsOverlay = (props) => {
     const [perUser, setPerUser] = useState(0);
     const [debts, setDebts] = useState([]);
 
-    const populateDebt = (debt) => {
-        const populateMember = ( {id, isDummy} ) => {
-            if (isDummy) {
-                return dummyToUser(props.dummies.find(dummy => dummy._id == id))
-            }
-            else {
-                return props.users.find(user => user._id == id)
-            }
-        }
-        return ({
-            from: populateMember(debt.from),
-            to: populateMember(debt.to),
-            amount: debt.amount
-        })
-    }
+    const party = props.party;
 
+    const loadDebts = () => {
+        party.getDebts()
+            .then(debts => {
+                setSum(debts.sum);
+                setPerUser(debts.perPerson);
+                setDebts(debts.debts);
+            })
+            .catch(console.log);
+    }
     useEffect(() => {
-        if (props.dummies.length > 0 && props.users.length > 0 && props.payments.length > 0) {
-            axios.get(makeFullUrl(`/calculate/debts/${props.partyId}`))
-                .then(response => {
-                    setSum(Number(response.data.spent).toFixed(1));
-                    setPerUser(Number(response.data.perPerson).toFixed(1));
-                    setDebts(response.data.debts.map(populateDebt));
-                })
-                .catch(err => console.log(err));
-        }
-    }, [props.users, props.payments, props.dummies])
+        loadDebts()
+    }, [props.isVisible])
 
     const renderDebtItem = ({item}) => {
         return (
