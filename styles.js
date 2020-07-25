@@ -8,7 +8,7 @@ export const APP_FONT = 'Nunito';
 export const APP_FONT_BOLD = 'Nunito Bold';
 export const APP_FONT_SEMIBOLD = 'Nunito Semi-bold';
 
-const listStyles = StyleSheet.create({
+export const AppStyles = StyleSheet.create({
     floatingIconButton: {
         position: 'absolute',
         bottom: 10,
@@ -21,7 +21,13 @@ const listStyles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 6,
         elevation: 4
+    },
+    listTitle: {
+        fontFamily: APP_FONT
+    },
+    listSubtitle: {
+        fontFamily: APP_FONT,
+        fontSize: 13,
+        opacity: 0.5
     }
 });
-
-export default listStyles;

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
 import PMBDivider from '../../components/pmb_divider';
-import commonStyles, { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
+import { AppStyles, APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
 import AddPaymentOverlay from './add_payment_overlay';
 import DebtsOverlay from './debts_overlay';
 
@@ -19,7 +19,7 @@ const PaymentCard = (props) => {
     const backgroundColor = cardColor + cardOpacity;
 
     return (
-        <View style={commonStyles.block}>
+        <View style={AppStyles.block}>
             <View style={[{backgroundColor}, style.paymentCardContainer]}>
                 <View style={style.leftBox}>
                     <View style={style.userBox}>
@@ -94,7 +94,7 @@ const PartyPaymentsView = (props) => {
                 {payments.map(item => renderPaymentItem({item}))}
             </ListContainer>
             <Icon 
-                containerStyle={commonStyles.floatingIconButton}
+                containerStyle={AppStyles.floatingIconButton}
                 name='add'
                 color={APP_COLOR}
                 onPress={() => setAddPaymentVisible(true)}

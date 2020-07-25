@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { makeFullUrl } from '../utils';
-import { Dummy } from './dummy.entity';
 import { User } from './user.entity';
 
 export class Payment {
@@ -9,6 +8,7 @@ export class Payment {
         this.party = dbPayment.party;
         this.amount = dbPayment.amount;
         this.description = dbPayment.description;
+        this.createdAt = dbPayment.createdAt;
         if (dbPayment.user) {
             this.user = dbPayment.user;
         } else {

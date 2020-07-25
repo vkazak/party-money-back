@@ -1,10 +1,8 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
-import { makeFullUrl } from '../../utils';
-import { User } from '../../entities/user.entity';
+import { AppStyles } from '../../styles';
 
 const UserAndCheckBoxItem = (props) => {
     const [checked, setChecked] = useState(false);
@@ -14,7 +12,9 @@ const UserAndCheckBoxItem = (props) => {
     return(
         <ListItem 
             title={item.name}
+            titleStyle={AppStyles.listTitle}
             subtitle={item.email}
+            subtitleStyle={AppStyles.listSubtitle}
             leftAvatar={{
                 source: require('../../src_files/default-avatar.png'),
                 rounded: true

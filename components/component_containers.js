@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
-import commonStyles from '../styles';
+import { AppStyles } from '../styles';
 
 
 export const BodyContainer = (props) => {
@@ -14,7 +14,7 @@ export const BodyContainer = (props) => {
 
 export const ListContainer = (props) => {
     return( 
-        <ScrollView style={[commonStyles.block, props.style]}>
+        <ScrollView style={[AppStyles.block, props.style]}>
             <View style={styles.listContainer}>
                 {props.children}
             </View>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 import { BodyContainer } from '../../components/component_containers';
-import commonStyles, { APP_COLOR } from '../../styles';
+import { AppStyles, APP_COLOR, APP_FONT } from '../../styles';
 import AddUsersOverlay from './add_users_overlay';
 
 const PartyUsersList = (props) => {
@@ -27,12 +27,13 @@ const PartyUsersList = (props) => {
         return (
             <ListItem 
                 title={item.name}
+                titleStyle={AppStyles.listTitle}
                 subtitle={item.email}
                 leftAvatar={{
                     source: { url: item.photoUrl },
                     rounded: true
                 }}
-                subtitleStyle={{opacity: 0.5, fontSize: 13}}
+                subtitleStyle={AppStyles.listSubtitle}
                 key={item._id}
             />
         )
@@ -40,7 +41,7 @@ const PartyUsersList = (props) => {
 
     return (
         <BodyContainer>
-            <View style={commonStyles.block}>
+            <View style={AppStyles.block}>
                 <View style={{borderRadius: 15, overflow: 'hidden'}}>
                     {users.map(user => {
                         return(renderUserItem({item: user}))
@@ -48,7 +49,7 @@ const PartyUsersList = (props) => {
                 </View>
             </View>
             <Icon 
-                containerStyle={commonStyles.floatingIconButton}
+                containerStyle={AppStyles.floatingIconButton}
                 name='add'
                 color={APP_COLOR}
                 onPress={() => setAddUsersVisible(true)}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
-import commonStyles, { APP_COLOR, APP_FONT } from '../../styles';
+import { AppStyles, APP_COLOR, APP_FONT } from '../../styles';
 import AddPartyOverlay from './add_party_overlay';
 import { BodyContainer } from '../../components/component_containers';
 
@@ -30,9 +30,9 @@ const PartiesListView = (props) => {
         return(
             <ListItem 
                 title={item.name}
-                titleStyle={style.itemTitle}
+                titleStyle={AppStyles.listTitle}
                 subtitle={`${numberOfMembers} member${numberOfMembers == 1 ? '' : 's'}`}
-                subtitleStyle={style.itemSubtitle}
+                subtitleStyle={AppStyles.listSubtitle}
                 onPress={onPress}
                 leftIcon={{
                     name: 'ios-beer',
@@ -48,7 +48,7 @@ const PartiesListView = (props) => {
 
     return(
         <BodyContainer>
-            <ScrollView style={commonStyles.block}>
+            <ScrollView style={AppStyles.block}>
                 <View style={{borderRadius: 15, overflow: 'hidden', marginBottom: 20}}>
                     {parties.map(party => {
                         return( renderPartyItem({item: party}) )
@@ -56,7 +56,7 @@ const PartiesListView = (props) => {
                 </View>
             </ScrollView>
             <Icon 
-                containerStyle={commonStyles.floatingIconButton}
+                containerStyle={AppStyles.floatingIconButton}
                 name='add'
                 color={APP_COLOR}
                 onPress={() => setShow(true)}
@@ -71,16 +71,5 @@ const PartiesListView = (props) => {
         </BodyContainer>
     )
 }
-
-const style = StyleSheet.create({
-    itemTitle: {
-        fontFamily: APP_FONT
-    },
-    itemSubtitle: {
-        fontFamily: APP_FONT,
-        opacity: 0.4, 
-        fontSize: 13
-    }
-});
 
 export default PartiesListView;
