@@ -33,6 +33,7 @@ const PartyUsersList = (props) => {
                     rounded: true
                 }}
                 subtitleStyle={{opacity: 0.5, fontSize: 13}}
+                key={item._id}
             />
         )
     }

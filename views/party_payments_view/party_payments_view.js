@@ -74,6 +74,7 @@ const PartyPaymentsView = (props) => {
             <PaymentCard
                 payment={item}
                 currentUserId={currentUser._id}
+                key={item._id}
             />
         )
     }

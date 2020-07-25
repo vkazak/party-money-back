@@ -19,7 +19,7 @@ const PartyCard = (props) => {
                 <View >
                     <Icon
                         name={props.iconName}
-                        size='100'
+                        size={100}
                         color='white'
                         type={props.iconType}
                     />
@@ -41,7 +41,7 @@ const cardStyle = StyleSheet.create({
 const PartyReviewView = (props) => {
     const user = props.route.params.user;
     const party = props.route.params.party;
-    
+
     const onPressPayments = () => {
         props.navigation.navigate("Party payments", {party, user})
     };

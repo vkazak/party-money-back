@@ -134,9 +134,7 @@ const DebtsOverlay = (props) => {
 
     const renderDebtItem = ({item}) => {
         return (
-            <View>
-                <DebtItem debt={item} currentUser={props.currentUser} />
-            </View>
+            <DebtItem debt={item} currentUser={props.currentUser} />
         )
     }
 
@@ -165,7 +163,7 @@ const DebtsOverlay = (props) => {
                         style={{margin: 5}}
                         data={debts}
                         renderItem={renderDebtItem}
-                        keyExtractor={debt => {debt.from, debt.to}}
+                        keyExtractor={debt => debt.from._id + debt.to._id}
                     />
                 </View>
             </View>

@@ -41,6 +41,7 @@ const PartiesListView = (props) => {
                     size: 35
                 }}
                 chevron={{color: APP_COLOR}}
+                key={item._id}
             />
         );
     }
@@ -50,7 +51,7 @@ const PartiesListView = (props) => {
             <ScrollView style={commonStyles.block}>
                 <View style={{borderRadius: 15, overflow: 'hidden', marginBottom: 20}}>
                     {parties.map(party => {
-                        return( renderPartyItem({item: party, key: party._id}) )
+                        return( renderPartyItem({item: party}) )
                     })}
                 </View>
             </ScrollView>
