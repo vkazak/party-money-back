@@ -1,10 +1,8 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { BodyContainer } from '../components/component_containers';
 import commonStyles, { APP_FONT } from '../styles';
-import { makeFullUrl } from '../utils';
 import { User } from '../entities/user.entity';
 
 const UsersListView = (props) => {

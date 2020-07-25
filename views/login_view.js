@@ -1,9 +1,7 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-native-elements';
 import { StyleSheet, View, AsyncStorage } from 'react-native';
 import * as Google from 'expo-google-app-auth';
-import { makeFullUrl } from '../utils';
 import { User } from '../entities/user.entity';
 
 const config = {

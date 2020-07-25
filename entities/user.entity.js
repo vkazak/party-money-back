@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { makeFullUrl } from '../utils';
+import { Party } from './party.entity';
+import { sortByCreatedAt } from './entity.utils';
 
 export class User {
     constructor(dbUser, isDummy) {
@@ -12,8 +14,22 @@ export class User {
         this.photoUrl = dbUser.photoUrl;
         this.dummies = dbUser.dummies;
         this.isDummy = Boolean(isDummy);
+        this.createdAt = dbUser.createdAt;
     }
- 
+    
+    addParty(party) {
+        this.parties = [party].concat(this.parties);
+    }
+
+    async getPartiesForUser() {
+        if (!this.parties) {
+            const response = await axios.get(makeFullUrl(`/parties/by_user/${this._id}`))
+            const dbParties = response.data;
+            this.parties = dbParties.map(dbParty => new Party(dbParty)).sort(sortByCreatedAt);
+        };
+        return this.parties;
+    }
+
     async getDummies(filterFn = (() => true)) {
         if (!this.isDummiesPopulated) {
             const response = await axios.get(makeFullUrl(`/dummies/by_user/${this._id}`));

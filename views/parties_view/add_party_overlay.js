@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { makeFullUrl } from '../../utils';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
+import { Party } from '../../entities/party.entity';
 
 const AddPartyOverlay = (props) => {
     const [name, setName] = useState("");
@@ -22,18 +21,11 @@ const AddPartyOverlay = (props) => {
     const onSave = () => {
         if (name) {
             setSavingView(true);
-            let party;
-
-            axios.post(makeFullUrl('/parties/add'), {name})
-                .then(response => {
-                    party = response.data;
-                    party.users = [props.userId];
-                    const request = {partyId: party._id, usersIds: [props.userId]};
-                    return (axios.post(makeFullUrl(`/parties/addmembers`), request))
-                })
-                .then(() => {
+            const party = new Party({ name });
+            party.create(props.currentUser)
+                .then(party => {
+                    props.updateParties();
                     setDoneView(true);
-                    props.addPartyToTheList(party);
                 })
                 .catch(err => {
                     setErrorView(true);
