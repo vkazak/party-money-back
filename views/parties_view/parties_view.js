@@ -8,18 +8,20 @@ import { BodyContainer } from '../../components/component_containers';
 const PartiesListView = (props) => {
 
     const user = props.route.params.user;
-    const userId = user._id;
 
     const [parties, setParties] = useState([]);
     const [showAddOverlay, setShow] = useState(false);
     
     const loadPartiesForUser = () => {
+        console.log(user);
         user.getPartiesForUser()
             .then(setParties)
             .catch(console.log);
     };
 
-    useEffect(loadPartiesForUser, []);
+    useEffect(() => {
+        loadPartiesForUser()
+    }, []);
 
     const renderPartyItem = ({item}) => {
         const onPress = () => {
@@ -49,7 +51,7 @@ const PartiesListView = (props) => {
             <ScrollView style={commonStyles.block}>
                 <View style={{borderRadius: 15, overflow: 'hidden', marginBottom: 20}}>
                     {parties.map(party => {
-                        return(renderPartyItem({item: party}))
+                        return( renderPartyItem({item: party, key: party._id}) )
                     })}
                 </View>
             </ScrollView>

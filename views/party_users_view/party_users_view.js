@@ -1,40 +1,27 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 import { BodyContainer } from '../../components/component_containers';
 import commonStyles, { APP_COLOR } from '../../styles';
-import { makeFullUrl, avatarUrl } from '../../utils';
 import AddUsersOverlay from './add_users_overlay';
 
 const PartyUsersList = (props) => {
 
     const [users, setUsers] = useState([]);
-    const [dummies, setDummies] = useState([]);
     const [isAddUsersVisible, setAddUsersVisible] = useState(false);
 
     const currentUser = props.route.params.user;
     const party = props.route.params.party;
 
-    useEffect(() => {
-        axios.get(makeFullUrl(`/users/by_party/${party._id}`))
-            .then(response => {
-                setUsers(response.data);
-            })
-            .catch(err => console.log(err));
-        axios.get(makeFullUrl(`/dummies/by_party/${party._id}`))
-            .then(response => {
-                setDummies(response.data);
-            })
-            .catch(err => console.log(err));
-    }, []);
+    loadUsersAndDummies = () => {
+        party.getUsersAndDummiesAsUsers()
+            .then(setUsers)
+            .catch(console.log);
+    };
 
-    const addUsersToList = (newUsers) => {
-        setUsers(users.slice().concat(newUsers))
-    }
-    const addDummiesToList = (newDummies) => {
-        setDummies(dummies.slice().concat(newDummies))
-    }
+    useEffect(() => {
+        loadUsersAndDummies();
+    }, []);
 
     const renderUserItem = ({item}) => {
         return (
@@ -49,17 +36,6 @@ const PartyUsersList = (props) => {
             />
         )
     }
-    const renderDummyItem = ({item}) => {
-        return (
-            <ListItem 
-                title={item.name}
-                leftAvatar={{
-                    source: { url: avatarUrl },
-                    rounded: true
-                }}
-            />
-        )
-    }
 
     return (
         <BodyContainer>
@@ -67,9 +43,6 @@ const PartyUsersList = (props) => {
                 <View style={{borderRadius: 15, overflow: 'hidden'}}>
                     {users.map(user => {
                         return(renderUserItem({item: user}))
-                    })}
-                    {dummies.map(dummy => {
-                        return(renderDummyItem({item: dummy}))
                     })}
                 </View>
             </View>
@@ -83,11 +56,9 @@ const PartyUsersList = (props) => {
             <AddUsersOverlay
                 isVisible={isAddUsersVisible}
                 partyUsers={users}
-                partyDummies={dummies}
-                addUsersToList={addUsersToList}
-                addDummiesToList={addDummiesToList}
+                updateUsers={loadUsersAndDummies}
                 onClose={() => setAddUsersVisible(false)}
-                partyId={party._id}
+                party={party}
                 currentUser={currentUser}
             />
         </BodyContainer>
