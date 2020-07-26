@@ -11,18 +11,18 @@ const config = {
     androidClientId: '260269100580-5vp9bfg6k4erkr5il5che90b63m4gvkv.apps.googleusercontent.com',
 };
 
-const getAppUserByGoogle = (userInfo, goNext) => {
+const getAppUserByGoogle = (userInfo, setUser) => {
     User.getUserByGoogleUserInfo(userInfo)
-        .then(goNext)
+        .then(setUser)
         .catch(console.log)
 }
 
-const signIn = async (goToParties, setSigninInProgress) => {
+const signIn = async (setUser, setSigninInProgress) => {
     try {
         setSigninInProgress(true);
         const { type, accessToken, user } = await Google.logInAsync(config);
         if (type == 'success') {
-            getAppUserByGoogle(user, goToParties)
+            getAppUserByGoogle(user, setUser)
         }
     } catch (err) {
         console.log(err);
@@ -47,24 +47,13 @@ const LoginView = (props) => {
 
     const [isSigninInProgress, setSigninInProgress] = useState(false)
 
-    const goToParties = (user) => {
-        props.navigation.reset({
-            index: 0,
-            routes: [{ name: 'Parties list', params: { user } }]
-        });
-    }
-
-    useEffect(() => {
-        
-    }, []);
-
     return (
         <View style={style.container}>
             <Button 
                 buttonStyle={style.button}
                 titleStyle={style.title}
                 title='Log in with Google'
-                onPress={() => signIn(goToParties, setSigninInProgress)}
+                onPress={() => signIn(props.setUser, setSigninInProgress)}
                 disabled={isSigninInProgress}
                 icon={
                     <Icon

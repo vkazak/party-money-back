@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { makeFullUrl, avatarUrl } from '../utils';
+import { makeFullUrl, avatarUrl, dummyToUser } from '../utils';
 import { Party } from './party.entity';
 import { sortByCreatedAt } from './entity.utils';
 import { Dummy } from './dummy.entity';
@@ -41,6 +41,11 @@ export class User {
         return ( this.dummies.filter(filterFn) );
     }
 
+    async getDummiesAsUsers(filterFn = (() => true)) {
+        const dummies = await this.getDummies();
+        return dummies.map(User.dummyToUser).filter(filterFn);
+    }
+
     static async getUsers(filterFn = (() => true)) {
         const response = await axios.get(makeFullUrl('/users'));
         const dbUsers = response.data;
@@ -61,7 +66,7 @@ export class User {
     }
 
     static joinUsersAndDummies(users, dummies) {
-        const dummiesUsers = dummies.map(this.dummyToUser);
+        const dummiesUsers = dummies.map(dummyToUser);
         return users.concat(dummiesUsers);
     }
 

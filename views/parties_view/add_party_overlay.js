@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 import { Party } from '../../entities/party.entity';
+import { UserContext } from '../../context/user_context';
 
 const AddPartyOverlay = (props) => {
+    const currentUser = React.useContext(UserContext);
+    
     const [name, setName] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [showSavingView, setSavingView] = useState(false);

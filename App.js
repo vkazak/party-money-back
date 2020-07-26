@@ -1,21 +1,15 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { loadAsync } from 'expo-font';
 import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
-import { APP_COLOR, APP_FONT_BOLD } from './styles';
-import PartiesListView from './views/parties_view/parties_view';
-import PartyPaymentsView from './views/party_payments_view/party_payments_view';
-import PartyReviewView from './views/party_review_view';
-import PartyUsersView from './views/party_users_view/party_users_view';
-import UsersListView from './views/users_view';
+import { TabNavigator } from './navigation/tab_navigation';
 import LoginView from './views/login_view';
-
-const Stack = createStackNavigator();
+import { UserContext } from './context/user_context';
 
 export default function App() {
 
     const [isLoaded, setLoaded] = useState(false);
+    const [user, setUser] = useState();
 
     useEffect(() => {
         loadAsync({
@@ -27,49 +21,22 @@ export default function App() {
     }, []);
 
     if (isLoaded) {
-        return (
-            <NavigationContainer>
-                <Stack.Navigator screenOptions={navigatorStyle}>
-                    <Stack.Screen
-                        name='Login'
-                        component={LoginView}
-                        options={{headerShown: false}}
-                    />
-                    <Stack.Screen
-                        name="Users list"
-                        component={UsersListView}
-                    />
-                    <Stack.Screen
-                        name="Parties list"
-                        component={PartiesListView}
-                    />
-                    <Stack.Screen
-                        name="Party review"
-                        component={PartyReviewView}
-                    />
-                    <Stack.Screen
-                        name="Party payments"
-                        component={PartyPaymentsView}
-                    />
-                    <Stack.Screen
-                        name="Users in party"
-                        component={PartyUsersView}
-                    />
-                </Stack.Navigator>
-            </NavigationContainer>
-        )
+        
+        if (user) {
+            return (
+                <UserContext.Provider value={user}>
+                    <NavigationContainer>
+                        <TabNavigator />
+                    </NavigationContainer>
+                </UserContext.Provider>
+            )
+        } else {
+            return (
+                <LoginView setUser={setUser}/>
+            )
+        }
     }
     else {
         return <Text>Loading fonts...</Text>;
     }
 }
-
-const navigatorStyle = {
-    headerStyle: {
-        backgroundColor: APP_COLOR,
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-        fontFamily: APP_FONT_BOLD
-    },
-};

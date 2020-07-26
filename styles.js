@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export const APP_BLUE = '#457B9D';
 export const APP_GREEN = '#40916C';
@@ -31,3 +31,13 @@ export const AppStyles = StyleSheet.create({
         opacity: 0.5
     }
 });
+
+export const NavigatorStyle = {
+    headerStyle: {
+        backgroundColor: APP_COLOR,
+    },
+    headerTintColor: 'white',
+    headerTitleStyle: {
+        fontFamily: APP_FONT_BOLD
+    }
+};

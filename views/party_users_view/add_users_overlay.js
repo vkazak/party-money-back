@@ -3,6 +3,7 @@ import { FlatList, View } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 import { AppStyles } from '../../styles';
+import { UserContext } from '../../context/user_context';
 
 const UserAndCheckBoxItem = (props) => {
     const [checked, setChecked] = useState(false);
@@ -31,6 +32,8 @@ const UserAndCheckBoxItem = (props) => {
 }
 
 const AddUsersOverlay = (props) => {
+    const currentUser = React.useContext(UserContext);
+
     const [users, setUsers] = useState([]);
     const [showSavingView, setSavingView] = useState(false);
     const [showDoneView, setDoneView] = useState(false);
@@ -47,7 +50,7 @@ const AddUsersOverlay = (props) => {
 
     useEffect(() => {
         const userOutOfPartyFn = (user) => !props.partyUsers.some(partyUser => partyUser._id == user._id);
-        props.currentUser.getUsersAndDummiesAsUsers(userOutOfPartyFn)
+        currentUser.getUsersAndDummiesAsUsers(userOutOfPartyFn)
             .then(setUsers)
             .catch(console.log);
     }, [props.partyUsers]);

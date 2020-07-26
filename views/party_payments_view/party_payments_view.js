@@ -6,11 +6,13 @@ import PMBDivider from '../../components/pmb_divider';
 import { AppStyles, APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
 import AddPaymentOverlay from './add_payment_overlay';
 import DebtsOverlay from './debts_overlay';
+import { UserContext } from '../../context/user_context';
 
 
 const PaymentCard = (props) => {
+    const currentUser = React.useContext(UserContext);
     const payment = props.payment;
-    const isCurrentUser = payment.user._id == props.currentUserId;
+    const isCurrentUser = payment.user._id == currentUser._id;
 
     const cardColor = isCurrentUser ? APP_GREEN : '#ffffff';
     const nameColor = isCurrentUser ? 'white' : '#00000090';
@@ -50,7 +52,7 @@ const PartyPaymentsView = (props) => {
     const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
     const [isDebtsVisible, setDebtsVisible] = useState(false);
 
-    const currentUser = props.route.params.user;
+    const currentUser = React.useContext(UserContext);
     const party = props.route.params.party;
 
     const loadMembers = () => {
@@ -106,13 +108,11 @@ const PartyPaymentsView = (props) => {
                 onClose={() => setAddPaymentVisible(false)}
                 party={party}
                 partyUsers={users}
-                defaultUserId={currentUser._id}
             />
             <DebtsOverlay
                 isVisible={isDebtsVisible}
                 onClose={() => setDebtsVisible(false)}
                 party={party}
-                currentUser={currentUser}
             />
         </BodyContainer>
     )

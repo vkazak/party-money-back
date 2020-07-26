@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
 import { BodyContainer } from '../components/component_containers';
 import { AppStyles, APP_BLUE, APP_GREEN } from '../styles';
+import { UserContext } from '../context/user_context';
 
 const PartyCard = (props) => {
 
@@ -39,14 +40,14 @@ const cardStyle = StyleSheet.create({
 })
 
 const PartyReviewView = (props) => {
-    const user = props.route.params.user;
+    const currentUser = React.useContext(UserContext);
     const party = props.route.params.party;
 
     const onPressPayments = () => {
-        props.navigation.navigate("Party payments", {party, user})
+        props.navigation.navigate("Party payments", {party})
     };
     const onPressUsers = () => {
-        props.navigation.navigate("Users in party", {party, user})
+        props.navigation.navigate("Users in party", {party})
     };
     return(
         <BodyContainer>

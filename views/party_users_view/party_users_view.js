@@ -4,14 +4,14 @@ import { Icon, ListItem } from 'react-native-elements';
 import { BodyContainer } from '../../components/component_containers';
 import { AppStyles, APP_COLOR, APP_FONT } from '../../styles';
 import AddUsersOverlay from './add_users_overlay';
+import { UserContext } from '../../context/user_context';
 
 const PartyUsersList = (props) => {
+    const currentUser = React.useContext(UserContext);
+    const party = props.route.params.party;
 
     const [users, setUsers] = useState([]);
     const [isAddUsersVisible, setAddUsersVisible] = useState(false);
-
-    const currentUser = props.route.params.user;
-    const party = props.route.params.party;
 
     loadUsersAndDummies = () => {
         party.getUsersAndDummiesAsUsers()
@@ -61,7 +61,6 @@ const PartyUsersList = (props) => {
                 updateUsers={loadUsersAndDummies}
                 onClose={() => setAddUsersVisible(false)}
                 party={party}
-                currentUser={currentUser}
             />
         </BodyContainer>
     )

@@ -3,36 +3,29 @@ import { View } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { BodyContainer } from '../components/component_containers';
 import { AppStyles, APP_FONT } from '../styles';
-import { User } from '../entities/user.entity';
+import { UserContext } from '../context/user_context';
 
-const UsersListView = (props) => {
+const DummiesListView = (props) => {
 
-    const [users, setUsers] = useState([]);
+    const [dummies, setDummies] = useState([]);
+    const currentUser = React.useContext(UserContext);
 
     useEffect(() => {
-        User.getUsers()
-            .then(setUsers)
+        currentUser.getDummiesAsUsers()
+            .then(setDummies)
             .catch(console.log)
     }, []);
 
-    const renderUserItem = ({item}) => {
-
-        const onPress = () => {
-            props.navigation.navigate("Parties list", {user: item})
-        };
+    const renderDummyItem = ({item}) => {
 
         return(
             <ListItem 
                 title={item.name}
                 titleStyle={AppStyles.listTitle}
-                subtitle={item.email}
-                subtitleStyle={AppStyles.listSubtitle}
                 leftAvatar={{
-                    source: require('../src_files/default-avatar.png'),
+                    source: { url: item.photoUrl },
                     rounded: true
                 }}
-                onPress={onPress}
-                chevron
             />
         );
     }
@@ -41,8 +34,8 @@ const UsersListView = (props) => {
         <BodyContainer>
             <View style={AppStyles.block}>
                 <View style={{borderRadius: 15, overflow: 'hidden'}}>
-                    {users.map(user => {
-                        return(renderUserItem({item: user}))
+                    {dummies.map(dummy => {
+                        return(renderDummyItem({item: dummy}))
                     })}
                 </View>
             </View>
@@ -50,4 +43,4 @@ const UsersListView = (props) => {
     )
 }
 
-export default UsersListView;
+export default DummiesListView;

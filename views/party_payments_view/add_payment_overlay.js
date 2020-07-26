@@ -4,9 +4,11 @@ import { View } from 'react-native';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 import { Payment } from '../../entities/payment.entity';
+import { UserContext } from '../../context/user_context';
 
 const AddPaymentOverlay = (props) => {
-    const [pickedUserId, setUserId] = useState(props.defaultUserId);
+    const currentUser = React.useContext(UserContext);
+    const [pickedUserId, setUserId] = useState(currentUser._id);
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState(0);
     const [showSavingView, setSavingView] = useState(false);
@@ -20,7 +22,7 @@ const AddPaymentOverlay = (props) => {
         setSavingView(false);
         setDoneView(false);
         setErrorView(false);
-        setUserId(props.defaultUserId);
+        setUserId(currentUser._id);
         setDescription("");
         setAmount(0);
     }

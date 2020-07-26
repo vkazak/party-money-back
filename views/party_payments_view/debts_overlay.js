@@ -4,6 +4,7 @@ import { Avatar, Icon } from 'react-native-elements';
 import PMBDivider from '../../components/pmb_divider';
 import PMBOverlay from '../../components/pmb_overlay';
 import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
+import { UserContext } from '../../context/user_context';
 
 const AmountInfo = (props) => {
     return (
@@ -35,7 +36,7 @@ const amountInfoStyle = StyleSheet.create({
 
 const DebtItem = (props) => {
     const debt = props.debt;
-    const currentUser = props.currentUser;
+    const currentUser = React.useContext(UserContext);
     
     const opacity = '30';
     let itemColor = APP_COLOR;
@@ -134,7 +135,7 @@ const DebtsOverlay = (props) => {
 
     const renderDebtItem = ({item}) => {
         return (
-            <DebtItem debt={item} currentUser={props.currentUser} />
+            <DebtItem debt={item} />
         )
     }
 
