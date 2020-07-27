@@ -21,6 +21,10 @@ export class User {
     addParty(party) {
         this.parties = [party].concat(this.parties);
     }
+    
+    addDummy(dummy) {
+        this.dummies.push(dummy);
+    }
 
     async getPartiesForUser() {
         if (!this.parties) {
@@ -66,7 +70,7 @@ export class User {
     }
 
     static joinUsersAndDummies(users, dummies) {
-        const dummiesUsers = dummies.map(dummyToUser);
+        const dummiesUsers = dummies.map(User.dummyToUser);
         return users.concat(dummiesUsers);
     }
 

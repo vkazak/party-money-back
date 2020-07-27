@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 import { AppStyles, APP_COLOR, APP_FONT } from '../../styles';
 import AddPartyOverlay from './add_party_overlay';
-import { BodyContainer } from '../../components/component_containers';
+import { BodyContainer, ListContainer } from '../../components/component_containers';
 import { UserContext } from '../../context/user_context';
 
 const PartiesListView = (props) => {
@@ -23,14 +23,14 @@ const PartiesListView = (props) => {
         loadPartiesForUser()
     }, []);
 
-    const renderPartyItem = ({item}) => {
+    const renderPartyItem = (party) => {
         const onPress = () => {
-            props.navigation.navigate("Party review", {party: item})
+            props.navigation.navigate("Party review", { party })
         };
-        const numberOfMembers = item.users.length + item.dummies.length;
+        const numberOfMembers = party.users.length + party.dummies.length;
         return(
             <ListItem 
-                title={item.name}
+                title={party.name}
                 titleStyle={AppStyles.listTitle}
                 subtitle={`${numberOfMembers} member${numberOfMembers == 1 ? '' : 's'}`}
                 subtitleStyle={AppStyles.listSubtitle}
@@ -42,20 +42,16 @@ const PartiesListView = (props) => {
                     size: 35
                 }}
                 chevron={{color: APP_COLOR}}
-                key={item._id}
+                key={party._id}
             />
         );
     }
 
     return(
         <BodyContainer>
-            <ScrollView style={AppStyles.block}>
-                <View style={{borderRadius: 15, overflow: 'hidden', marginBottom: 20}}>
-                    {parties.map(party => {
-                        return( renderPartyItem({item: party}) )
-                    })}
-                </View>
-            </ScrollView>
+            <ListContainer>
+                { parties.map(renderPartyItem) }
+            </ListContainer>
             <Icon 
                 containerStyle={AppStyles.floatingIconButton}
                 name='add'
@@ -66,7 +62,6 @@ const PartiesListView = (props) => {
             <AddPartyOverlay
                 isVisible={showAddOverlay}
                 onClose={() => setShow(false)}
-                currentUser={currentUser}
                 updateParties={loadPartiesForUser}
             />
         </BodyContainer>

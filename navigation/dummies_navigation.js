@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigatorStyle } from "../styles";
-import DummiesListView from "../views/dummies_view";
+import DummiesListView from "../views/dummies_view/dummies_view";
 
 const Stack = createStackNavigator();
 

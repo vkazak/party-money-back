@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
-import { BodyContainer } from '../../components/component_containers';
+import { BodyContainer, ListContainer } from '../../components/component_containers';
 import { AppStyles, APP_COLOR, APP_FONT } from '../../styles';
 import AddUsersOverlay from './add_users_overlay';
 import { UserContext } from '../../context/user_context';
@@ -41,13 +41,11 @@ const PartyUsersList = (props) => {
 
     return (
         <BodyContainer>
-            <View style={AppStyles.block}>
-                <View style={{borderRadius: 15, overflow: 'hidden'}}>
-                    {users.map(user => {
-                        return(renderUserItem({item: user}))
-                    })}
-                </View>
-            </View>
+            <ListContainer>
+                {users.map(user => {
+                    return(renderUserItem({item: user}))
+                })}
+            </ListContainer>
             <Icon 
                 containerStyle={AppStyles.floatingIconButton}
                 name='add'

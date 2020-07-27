@@ -64,8 +64,8 @@ export class Party {
             }
         });
         const extractId = (member) => member._id;
-        dummiesIds = dummies.map(extractId);
-        usersIds = users.map(extractId);
+        const dummiesIds = dummies.map(extractId);
+        const usersIds = users.map(extractId);
 
         await axios.post(makeFullUrl(`/parties/addmembers`), { usersIds, dummiesIds, partyId: this._id});
         this.users = this.users.slice().concat(users);

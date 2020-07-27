@@ -5,6 +5,8 @@ import PMBDivider from '../../components/pmb_divider';
 import PMBOverlay from '../../components/pmb_overlay';
 import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
 import { UserContext } from '../../context/user_context';
+import { ListContainer } from '../../components/component_containers';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const AmountInfo = (props) => {
     return (
@@ -133,9 +135,12 @@ const DebtsOverlay = (props) => {
         loadDebts()
     }, [props.isVisible])
 
-    const renderDebtItem = ({item}) => {
+    const renderDebtItem = (debt) => {
         return (
-            <DebtItem debt={item} />
+            <DebtItem 
+                debt={debt} 
+                key={debt.from._id + debt.to._id}
+            />
         )
     }
 
@@ -147,7 +152,7 @@ const DebtsOverlay = (props) => {
             onClose={props.onClose}
             onSave={props.onClose}
         >
-            <View style={{marginBottom: 10}}>
+            <View style={{marginBottom: 50}}>
                 <View style={style.headerContainer}>
                     <AmountInfo 
                         title='Per person'
@@ -159,14 +164,9 @@ const DebtsOverlay = (props) => {
                         amount={sum}
                     />
                 </View>
-                <View>
-                    <FlatList
-                        style={{margin: 5}}
-                        data={debts}
-                        renderItem={renderDebtItem}
-                        keyExtractor={debt => debt.from._id + debt.to._id}
-                    />
-                </View>
+                <ScrollView>
+                    { debts.map(renderDebtItem) }
+                </ScrollView>
             </View>
         </PMBOverlay>
     )
@@ -175,7 +175,8 @@ const DebtsOverlay = (props) => {
 const style = StyleSheet.create({
     headerContainer: {
         height: 50,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginBottom: 8
     }
 });
 

@@ -5,7 +5,6 @@ import PartiesListView from '../views/parties_view/parties_view';
 import PartyPaymentsView from '../views/party_payments_view/party_payments_view';
 import PartyReviewView from '../views/party_review_view';
 import PartyUsersView from '../views/party_users_view/party_users_view';
-import LoginView from '../views/login_view';
 
 const Stack = createStackNavigator();
 

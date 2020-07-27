@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
-import { Party } from '../../entities/party.entity';
 import { UserContext } from '../../context/user_context';
+import { Dummy } from '../../entities/dummy.entity';
 
-const AddPartyOverlay = (props) => {
+const AddDummyOverlay = (props) => {
     const currentUser = React.useContext(UserContext);
 
     const [name, setName] = useState("");
@@ -24,10 +24,10 @@ const AddPartyOverlay = (props) => {
     const onSave = () => {
         if (name) {
             setSavingView(true);
-            const party = new Party({ name });
-            party.create(currentUser)
-                .then(party => {
-                    props.updateParties();
+            const dummy = new Dummy({ name });
+            dummy.create(currentUser)
+                .then(dummy => {
+                    props.updateDummies();
                     setDoneView(true);
                 })
                 .catch(err => {
@@ -42,7 +42,7 @@ const AddPartyOverlay = (props) => {
                 })
         }
         else {
-            setErrorMsg('Enter a valid name for a party')
+            setErrorMsg('Enter a valid name for a dummy')
         }
     }
 
@@ -54,7 +54,7 @@ const AddPartyOverlay = (props) => {
 
     return (
         <PMBOverlay
-            title='Add a new party'
+            title='Add a new dummy'
             saveTitle='Add'
             isVisible={props.isVisible}
             onClose={onClose}
@@ -65,8 +65,8 @@ const AddPartyOverlay = (props) => {
         >
             <Input
                 containerStyle={{marginVertical: 30}}
-                label='Party name'
-                placeholder='Scrinzh'
+                label='Dummy user name'
+                placeholder='Vovan'
                 onChangeText={text => {
                     setName(text);
                     setErrorMsg("");
@@ -79,4 +79,4 @@ const AddPartyOverlay = (props) => {
     )
 }
 
-export default AddPartyOverlay;
+export default AddDummyOverlay;

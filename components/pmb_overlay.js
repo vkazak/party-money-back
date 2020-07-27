@@ -45,32 +45,34 @@ const PMBOverlay = (props) => {
                     <View style={style.header}>
                         <Text style={style.headerText}>{props.title}</Text>
                     </View>
-                    <View>
-                        <View style={style.content}>{props.children}</View>
-                        <View style={style.footer}>
-                            <Button 
-                                style={style.button} 
-                                buttonStyle={{borderColor: APP_COLOR}} 
-                                titleStyle={[style.buttonTitle, {color: APP_COLOR}]}
-                                title="Cancel" 
-                                type="outline" 
-                                onPress={props.onClose}
-                            />
-                            <Button 
-                                style={style.button} 
-                                titleStyle={style.buttonTitle}
-                                buttonStyle={{backgroundColor: APP_COLOR}} 
-                                color={APP_COLOR} 
-                                title={saveTitle} 
-                                onPress={props.onSave}
-                            />
-                        </View> 
+                    <View style={style.content}>{props.children}</View>
+                        
                         <IndicatorScreen 
                             showSavingView={props.showSavingView}
                             showDoneView={props.showDoneView}
                             showErrorView={props.showErrorView}
                         />
-                    </View>
+                    <View style={style.footer}> 
+                            <View style={style.footerFlexBox}>
+                                <View style={style.buttonFlexBox}> 
+                                    <Button 
+                                        buttonStyle={[style.button, style.buttonRight]} 
+                                        titleStyle={style.buttonTitle}
+                                        title="Cancel" 
+                                        onPress={props.onClose}
+                                    /> 
+                                </View>
+                                <View style={style.buttonFlexBox}> 
+                                    <Button 
+                                        titleStyle={[style.buttonTitle, {}]}
+                                        buttonStyle={[style.button, style.buttonLeft]} 
+                                        color={APP_COLOR} 
+                                        title={saveTitle} 
+                                        onPress={props.onSave}
+                                    /> 
+                                </View>
+                            </View> 
+                        </View>
                 </View>
             </View>
         </Modal>
@@ -88,7 +90,8 @@ const style = StyleSheet.create({
     },
     container: {
         width: '80%',
-        backgroundColor: 'white',
+        maxHeight: '80%',
+        backgroundColor: '#ffffff',
         borderRadius,
         shadowColor: "#000",
         shadowOffset: {
@@ -113,22 +116,42 @@ const style = StyleSheet.create({
         height: 60,
     },
     content: {
+        maxHeight: '76.5%',
         paddingVertical: 10,
-        paddingHorizontal: 5
+        paddingHorizontal: 5,
     },
     footer: {
-        marginHorizontal: 20,
-        marginBottom: 20,
-        flexDirection: "row-reverse",
-        height: 40
+        backgroundColor: 'white',
+        height: 60,
+        borderBottomRightRadius: borderRadius,
+        borderBottomLeftRadius: borderRadius,
+    },
+    footerFlexBox: {
+        flex: 1,
+        flexDirection: 'row-reverse',
     },
     buttonTitle: {
-        fontFamily: APP_FONT
+        fontFamily: APP_FONT,
+        color: 'white'
+    },
+    buttonFlexBox: {
+        flex: 0.5,
     },
     button: {
-        marginLeft: 10,
-        width: 100,
-        flexGrow: 0.3
+        height: 44,
+        margin: 8,
+        borderWidth: 0,
+        borderColor: APP_COLOR,
+    },
+    buttonLeft: {
+        borderBottomLeftRadius: borderRadius-7,
+        marginRight: 4,
+        backgroundColor: APP_GREEN + 'dd'
+    },
+    buttonRight: {
+        borderBottomRightRadius: borderRadius-7,
+        marginLeft: 4,
+        backgroundColor: APP_COLOR + 'dd'
     },
     savingView: {
         flex: 1,
