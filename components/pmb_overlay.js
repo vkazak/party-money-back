@@ -69,6 +69,7 @@ const PMBOverlay = (props) => {
                                         color={APP_COLOR} 
                                         title={saveTitle} 
                                         onPress={props.onSave}
+                                        disabled={props.showSavingView}
                                     /> 
                                 </View>
                             </View> 
@@ -161,8 +162,8 @@ const style = StyleSheet.create({
         width: "100%", 
         height: "100%", 
         backgroundColor: "rgba(255, 255, 255, 0.8)",
-        borderBottomLeftRadius: borderRadius,
-        borderBottomRightRadius: borderRadius,
+        borderTopLeftRadius: borderRadius,
+        borderTopRightRadius: borderRadius,
     },
     indicator: {
         paddingBottom: 60
