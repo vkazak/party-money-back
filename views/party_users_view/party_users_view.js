@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
-import { AppStyles, APP_COLOR, APP_FONT } from '../../styles';
+import { AppStyles, APP_COLOR } from '../../styles';
 import AddUsersOverlay from './add_users_overlay';
-import { UserContext } from '../../context/user_context';
 
 const PartyUsersList = (props) => {
-    const currentUser = React.useContext(UserContext);
     const party = props.route.params.party;
 
+    const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
     const [isAddUsersVisible, setAddUsersVisible] = useState(false);
 
+    const onDataLoaded = (users) => {
+        setUsers(users);
+        setLoading(false);
+    }
+
     loadUsersAndDummies = () => {
         party.getUsersAndDummiesAsUsers()
-            .then(setUsers)
+            .then(onDataLoaded)
             .catch(console.log);
     };
 
@@ -41,7 +44,7 @@ const PartyUsersList = (props) => {
 
     return (
         <BodyContainer>
-            <ListContainer>
+            <ListContainer isLoading={loading}>
                 {users.map(user => {
                     return(renderUserItem({item: user}))
                 })}

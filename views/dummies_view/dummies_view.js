@@ -9,12 +9,18 @@ import AddDummyOverlay from './add_dummy_overlay';
 const DummiesListView = (props) => {
     const currentUser = React.useContext(UserContext);
 
+    const [loading, setLoading] = useState(true);
     const [dummies, setDummies] = useState([]);
     const [isAddDialogVisible, setAddDialogVisible] = useState(false);
 
+    const onDataLoaded = (dummies) => {
+        setDummies(dummies);
+        setLoading(false);
+    }
+
     const loadDummiesAsUsers = () => {
         currentUser.getDummiesAsUsers()
-            .then(setDummies)
+            .then(onDataLoaded)
             .catch(console.log)
     };
 
@@ -38,7 +44,7 @@ const DummiesListView = (props) => {
 
     return(
         <BodyContainer>
-            <ListContainer>
+            <ListContainer isLoading={loading}>
                 { dummies.map(renderDummyItem) }          
             </ListContainer>
             <Icon 

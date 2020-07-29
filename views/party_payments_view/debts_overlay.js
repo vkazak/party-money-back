@@ -5,7 +5,7 @@ import PMBDivider from '../../components/pmb_divider';
 import PMBOverlay from '../../components/pmb_overlay';
 import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
 import { UserContext } from '../../context/user_context';
-import { ListContainer } from '../../components/component_containers';
+import { ListContainer, LoadIndicatorView } from '../../components/component_containers';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const AmountInfo = (props) => {
@@ -115,25 +115,35 @@ const debtStyle = StyleSheet.create({
 });
 
 const DebtsOverlay = (props) => {
-     
+    
+    const [loading, setLoading] = useState(true);
     const [sum, setSum] = useState(0);
     const [perUser, setPerUser] = useState(0);
     const [debts, setDebts] = useState([]);
 
     const party = props.party;
 
+    const onDataLoaded = (debts) => {
+        setSum(debts.sum);
+        setPerUser(debts.perPerson);
+        setDebts(debts.debts);
+        setLoading(false);
+    };
     const loadDebts = () => {
         party.getDebts()
-            .then(debts => {
-                setSum(debts.sum);
-                setPerUser(debts.perPerson);
-                setDebts(debts.debts);
-            })
+            .then(onDataLoaded)
             .catch(console.log);
     }
     useEffect(() => {
-        loadDebts()
+        if (props.isVisible) {
+            loadDebts()
+        }
     }, [props.isVisible])
+
+    const onClose = () => {
+        setLoading(true);
+        props.onClose();
+    }
 
     const renderDebtItem = (debt) => {
         return (
@@ -149,25 +159,27 @@ const DebtsOverlay = (props) => {
             title='Debts report'
             saveTitle='OK'
             isVisible={props.isVisible}
-            onClose={props.onClose}
+            onClose={onClose}
             onSave={props.onClose}
         >
-            <View style={{marginBottom: 50}}>
-                <View style={style.headerContainer}>
-                    <AmountInfo 
-                        title='Per person'
-                        amount={perUser}
-                    />
-                    <PMBDivider/>
-                    <AmountInfo
-                        title='Total spent'
-                        amount={sum}
-                    />
+            <LoadIndicatorView isLoading={loading}>
+                <View style={{marginBottom: 50}}>
+                    <View style={style.headerContainer}>
+                        <AmountInfo 
+                            title='Per person'
+                            amount={perUser}
+                        />
+                        <PMBDivider/>
+                        <AmountInfo
+                            title='Total spent'
+                            amount={sum}
+                        />
+                    </View>
+                    <ScrollView>
+                        { debts.map(renderDebtItem) }
+                    </ScrollView>
                 </View>
-                <ScrollView>
-                    { debts.map(renderDebtItem) }
-                </ScrollView>
-            </View>
+            </LoadIndicatorView>
         </PMBOverlay>
     )
 }

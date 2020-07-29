@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
-import { AppStyles, APP_COLOR, APP_FONT } from '../../styles';
-import AddPartyOverlay from './add_party_overlay';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
 import { UserContext } from '../../context/user_context';
+import { AppStyles, APP_COLOR } from '../../styles';
+import AddPartyOverlay from './add_party_overlay';
 
 const PartiesListView = (props) => {
 
     const currentUser = React.useContext(UserContext);
 
+    const [loading, setLoading] = useState(true);
     const [parties, setParties] = useState([]);
     const [showAddOverlay, setShow] = useState(false);
     
+    const onDataLoaded = (parties) => {
+        setParties(parties);
+        setLoading(false);
+    }
+
     const loadPartiesForUser = () => {
         currentUser.getPartiesForUser()
-            .then(setParties)
+            .then(onDataLoaded)
             .catch(console.log);
     };
 
@@ -49,7 +54,7 @@ const PartiesListView = (props) => {
 
     return(
         <BodyContainer>
-            <ListContainer>
+            <ListContainer isLoading={loading}>
                 { parties.map(renderPartyItem) }
             </ListContainer>
             <Icon 

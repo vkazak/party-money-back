@@ -46,37 +46,34 @@ const PaymentCard = (props) => {
 }
 
 const PartyPaymentsView = (props) => {
-
+    const [loading, setLoading] = useState(true);
     const [payments, setPayments] = useState([]);
-    const [users, setUsers] = useState([]);
     const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
     const [isDebtsVisible, setDebtsVisible] = useState(false);
 
     const currentUser = React.useContext(UserContext);
     const party = props.route.params.party;
 
-    const loadMembers = () => {
-        party.getUsersAndDummiesAsUsers()
-            .then(setUsers)
-            .catch(console.log);
+    const onDataLoaded = (payments) => {
+        setPayments(payments);
+        setLoading(false);
     }
     const loadPayments = () => {
         party.getPayments()
-            .then(setPayments)
+            .then(onDataLoaded)
             .catch(console.log);
     }
 
     useEffect(() => {
-        loadMembers();
         loadPayments();
     }, []);
 
-    const renderPaymentItem = ({item}) => {
+    const renderPaymentItem = (payment) => {
         return (
             <PaymentCard
-                payment={item}
+                payment={payment}
                 currentUserId={currentUser._id}
-                key={item._id}
+                key={payment._id}
             />
         )
     }
@@ -92,8 +89,8 @@ const PartyPaymentsView = (props) => {
                     raised
                 />
             </View>
-            <ListContainer style={{marginTop: 60}}>
-                {payments.map(item => renderPaymentItem({item}))}
+            <ListContainer isLoading={loading} style={{marginTop: 60}}>
+                {payments.map(renderPaymentItem)}
             </ListContainer>
             <Icon 
                 containerStyle={AppStyles.floatingIconButton}
@@ -107,7 +104,6 @@ const PartyPaymentsView = (props) => {
                 updatePayments={loadPayments}
                 onClose={() => setAddPaymentVisible(false)}
                 party={party}
-                partyUsers={users}
             />
             <DebtsOverlay
                 isVisible={isDebtsVisible}

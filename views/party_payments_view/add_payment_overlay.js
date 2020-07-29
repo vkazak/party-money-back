@@ -1,13 +1,17 @@
 import { Picker } from '@react-native-community/picker';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
+import { LoadIndicatorView } from '../../components/component_containers';
 import { Payment } from '../../entities/payment.entity';
 import { UserContext } from '../../context/user_context';
 
 const AddPaymentOverlay = (props) => {
     const currentUser = React.useContext(UserContext);
+    
+    const [loading, setLoading] = useState(true);
+    const [users, setUsers] = useState([]);
     const [pickedUserId, setUserId] = useState(currentUser._id);
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState(0);
@@ -15,8 +19,22 @@ const AddPaymentOverlay = (props) => {
     const [showDoneView, setDoneView] = useState(false);
     const [showErrorView, setErrorView] = useState(false);
 
-    const users = props.partyUsers;
     const party = props.party;
+
+    const onDataLoaded = (users) => {
+        setUsers(users);
+        setLoading(false);
+    }
+    const loadMembers = () => {
+        party.getUsersAndDummiesAsUsers()
+            .then(onDataLoaded)
+            .catch(console.log);
+    };
+    useEffect(() => {
+        if (props.isVisible) {
+            loadMembers();
+        }
+    }, [props.isVisible]);
 
     const clearStates = () => {
         setSavingView(false);
@@ -63,7 +81,7 @@ const AddPaymentOverlay = (props) => {
             showDoneView={showDoneView}
             showErrorView={showErrorView}
         >
-            <View>
+            <LoadIndicatorView isLoading={loading}>
                 <Picker 
                     mode='dropdown'
                     selectedValue={pickedUserId}
@@ -72,7 +90,7 @@ const AddPaymentOverlay = (props) => {
                     }
                 >
                     {
-                        props.partyUsers.map((user) => {
+                        users.map((user) => {
                             return(
                                 <Picker.Item label={user.name} value={user._id} key={user._id}/>
                             )
@@ -92,7 +110,7 @@ const AddPaymentOverlay = (props) => {
                     onChangeText={text => setDescription(text)}
                     labelStyle={{ fontWeight: "500"}}
                 />
-            </View>
+            </LoadIndicatorView>
         </PMBOverlay>
     )
 }

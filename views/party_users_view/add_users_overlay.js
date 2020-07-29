@@ -4,6 +4,7 @@ import { ListItem } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
 import { AppStyles } from '../../styles';
 import { UserContext } from '../../context/user_context';
+import { ListContainer } from '../../components/component_containers';
 
 const UserAndCheckBoxItem = (props) => {
     const [checked, setChecked] = useState(false);
@@ -34,6 +35,7 @@ const UserAndCheckBoxItem = (props) => {
 const AddUsersOverlay = (props) => {
     const currentUser = React.useContext(UserContext);
 
+    const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
     const [showSavingView, setSavingView] = useState(false);
     const [showDoneView, setDoneView] = useState(false);
@@ -48,10 +50,15 @@ const AddUsersOverlay = (props) => {
         checkedUsers.clear();
     }
 
+    const onDataLoaded = (users) => {
+        setUsers(users);
+        setLoading(false);
+    }
+
     useEffect(() => {
         const userOutOfPartyFn = (user) => !props.partyUsers.some(partyUser => partyUser._id == user._id);
         currentUser.getUsersAndDummiesAsUsers(userOutOfPartyFn)
-            .then(setUsers)
+            .then(onDataLoaded)
             .catch(console.log);
     }, [props.partyUsers]);
 
@@ -80,11 +87,12 @@ const AddUsersOverlay = (props) => {
             });
     }
 
-    const renderUserItem = ({item}) => {
+    const renderUserItem = (user) => {
         return (
             <UserAndCheckBoxItem
-                item={item}
+                item={user}
                 checkedUsers={checkedUsers}
+                key={user._id}
             />
         )
     }
@@ -99,14 +107,10 @@ const AddUsersOverlay = (props) => {
             showSavingView={showSavingView}
             showDoneView={showDoneView}
             showErrorView={showErrorView}
-        >
-            <View style={{marginBottom: 10}}>
-                <FlatList
-                    data={users}
-                    renderItem={renderUserItem}
-                    keyExtractor={user => user._id}
-                />
-            </View>
+        >   
+            <ListContainer isLoading={loading} noBlock noFullScreen>
+                {users.map(renderUserItem)}
+            </ListContainer>
         </PMBOverlay>
     )
 }
