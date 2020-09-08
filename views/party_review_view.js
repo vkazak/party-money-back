@@ -4,7 +4,6 @@ import { Icon } from 'react-native-elements';
 import TouchableScale from 'react-native-touchable-scale';
 import { BodyContainer } from '../components/component_containers';
 import { AppStyles, APP_BLUE, APP_GREEN } from '../styles';
-import { UserContext } from '../context/user_context';
 
 const PartyCard = (props) => {
 
@@ -40,7 +39,6 @@ const cardStyle = StyleSheet.create({
 })
 
 const PartyReviewView = (props) => {
-    const currentUser = React.useContext(UserContext);
     const party = props.route.params.party;
 
     const onPressPayments = () => {

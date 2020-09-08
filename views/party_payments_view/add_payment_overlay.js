@@ -51,6 +51,9 @@ const AddPaymentOverlay = (props) => {
     }
 
     const onSave = () => {
+        if (amount > 1e9) {
+            
+        }
         setSavingView(true);
         const user = users.find(user => user._id == pickedUserId);
         const payment = new Payment({party, user, description, amount});

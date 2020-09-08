@@ -26,13 +26,19 @@ export class User {
         this.dummies.push(dummy);
     }
 
+    async loadPartiesForUser() {
+        const response = await axios.get(makeFullUrl(`/parties/by_user/${this._id}`))
+        const dbParties = response.data;
+        this.parties = dbParties.map(dbParty => new Party(dbParty)).sort(sortByCreatedAt);
+        return this.parties;
+    }
+
     async getPartiesForUser() {
         if (!this.parties) {
-            const response = await axios.get(makeFullUrl(`/parties/by_user/${this._id}`))
-            const dbParties = response.data;
-            this.parties = dbParties.map(dbParty => new Party(dbParty)).sort(sortByCreatedAt);
-        };
-        return this.parties;
+            return this.loadPartiesForUser()
+        } else {
+            return this.parties;
+        }
     }
 
     async getDummies(filterFn = (() => true)) {

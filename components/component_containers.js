@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, ActivityIndicator } from 'react-native';
-import { AppStyles, APP_COLOR } from '../styles';
+import { StyleSheet, View, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { AppStyles, APP_COLOR, APP_BLUE } from '../styles';
 
 
 export const BodyContainer = (props) => {
@@ -14,8 +14,21 @@ export const BodyContainer = (props) => {
 
 export const ListContainer = (props) => {
     return( 
-        <LoadIndicatorView isLoading={props.isLoading} fullScreen={!props.noFullScreen}>
-            <ScrollView style={[props.noBlock ? {} : AppStyles.block, props.style]}>
+        <LoadIndicatorView 
+            isLoading={props.isLoading} 
+            fullScreen={!props.noFullScreen}
+        >
+            <ScrollView 
+                style={[props.noBlock ? {} : AppStyles.block, props.style]}
+                refreshControl={ 
+                    <RefreshControl 
+                        refreshing={props.refreshing} 
+                        onRefresh={props.onRefresh}
+                        tintColor={APP_COLOR}
+                        colors={[APP_COLOR]} 
+                    /> 
+                }
+            >
                 <View style={styles.listContainer}>
                     {props.children}
                 </View>

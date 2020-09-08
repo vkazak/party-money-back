@@ -10,23 +10,32 @@ const PartiesListView = (props) => {
     const currentUser = React.useContext(UserContext);
 
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [parties, setParties] = useState([]);
     const [showAddOverlay, setShow] = useState(false);
-    
-    const onDataLoaded = (parties) => {
-        setParties(parties);
-        setLoading(false);
-    }
 
-    const loadPartiesForUser = () => {
+    const getPartiesForUser = () => {
         currentUser.getPartiesForUser()
-            .then(onDataLoaded)
+            .then(parties => {
+                setParties(parties);
+                setLoading(false);
+            })
             .catch(console.log);
     };
 
     useEffect(() => {
-        loadPartiesForUser()
+        getPartiesForUser()
     }, []);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        currentUser.loadPartiesForUser()
+            .then(parties => {
+                setParties(parties);
+                setRefreshing(false);
+            })
+            .catch(console.log);
+    }
 
     const renderPartyItem = (party) => {
         const onPress = () => {
@@ -54,7 +63,7 @@ const PartiesListView = (props) => {
 
     return(
         <BodyContainer>
-            <ListContainer isLoading={loading}>
+            <ListContainer isLoading={loading} refreshing={refreshing} onRefresh={onRefresh}>
                 { parties.map(renderPartyItem) }
             </ListContainer>
             <Icon 
@@ -67,7 +76,7 @@ const PartiesListView = (props) => {
             <AddPartyOverlay
                 isVisible={showAddOverlay}
                 onClose={() => setShow(false)}
-                updateParties={loadPartiesForUser}
+                updateParties={getPartiesForUser}
             />
         </BodyContainer>
     )

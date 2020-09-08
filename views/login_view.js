@@ -1,35 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Button, Icon } from 'react-native-elements';
 import { StyleSheet, View, AsyncStorage } from 'react-native';
-import * as Google from 'expo-google-app-auth';
-import { User } from '../entities/user.entity';
 import { APP_COLOR, APP_FONT } from '../styles';
-
-const config = {
-    expoClientId: '260269100580-5m6deds5j5fg0mcktvf6h36ine2ul2m9.apps.googleusercontent.com',
-    iosClientId: '260269100580-mjn536bchrjebb4ns97p076t8h1d42sa.apps.googleusercontent.com',
-    androidClientId: '260269100580-5vp9bfg6k4erkr5il5che90b63m4gvkv.apps.googleusercontent.com',
-};
-
-const getAppUserByGoogle = (userInfo, setUser) => {
-    User.getUserByGoogleUserInfo(userInfo)
-        .then(setUser)
-        .catch(console.log)
-}
-
-const signIn = async (setUser, setSigninInProgress) => {
-    try {
-        setSigninInProgress(true);
-        const { type, accessToken, user } = await Google.logInAsync(config);
-        if (type == 'success') {
-            getAppUserByGoogle(user, setUser)
-        }
-    } catch (err) {
-        console.log(err);
-    } finally {
-        setSigninInProgress(false)
-    }
-}
+import { observer } from 'mobx-react';
+import { LoginState } from '../store/user.store';
 
 const checkExistingAccessTokenAndGo = async () => {
     try {
@@ -43,30 +17,35 @@ const checkExistingAccessTokenAndGo = async () => {
     }
 }
 
-const LoginView = (props) => {
+@observer
+class LoginView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.userStore = props.userStore;
+    }
 
-    const [isSigninInProgress, setSigninInProgress] = useState(false)
-
-    return (
-        <View style={style.container}>
-            <Button 
-                buttonStyle={style.button}
-                titleStyle={style.title}
-                title='Log in with Google'
-                onPress={() => signIn(props.setUser, setSigninInProgress)}
-                disabled={isSigninInProgress}
-                icon={
-                    <Icon
-                        name="logo-google"
-                        size={35}
-                        color="white"
-                        type="ionicon"
-                        containerStyle={{ marginHorizontal: 15 }}
-                    />
-                }
-            />
-        </View>
-    )
+    render() {
+        return (
+            <View style={style.container}>
+                <Button 
+                    buttonStyle={style.button}
+                    titleStyle={style.title}
+                    title='Log in with Google'
+                    onPress={() => this.userStore.tryToLogIn()}
+                    disabled={this.userStore.loginState == LoginState.PENDING}
+                    icon={
+                        <Icon
+                            name="logo-google"
+                            size={35}
+                            color="white"
+                            type="ionicon"
+                            containerStyle={{ marginHorizontal: 15 }}
+                        />
+                    }
+                />
+            </View>
+        )
+    }
 }
 
 const style = StyleSheet.create({
