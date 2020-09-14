@@ -1,82 +1,48 @@
-import React, { useState } from 'react';
+import { observer } from 'mobx-react';
+import React from 'react';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
-import { Party } from '../../entities/party.entity';
-import { UserContext } from '../../context/user_context';
+import { AddPartyOverlayStore } from '../../store/view_store/parties_view_store/add_party_overlay.store';
+import { closeDialogDelayed } from '../../utils';
 
-const AddPartyOverlay = (props) => {
-    const currentUser = React.useContext(UserContext);
-
-    const [name, setName] = useState("");
-    const [errorMsg, setErrorMsg] = useState("");
-    const [showSavingView, setSavingView] = useState(false);
-    const [showDoneView, setDoneView] = useState(false);
-    const [showErrorView, setErrorView] = useState(false);
-
-    const clearStates = () => {
-        setName("");
-        setErrorMsg("");
-        setSavingView(false);
-        setDoneView(false);
-        setErrorView(false);
+@observer
+export class AddPartyOverlay extends React.Component {
+    constructor(props) {
+        super(props);
+        this.viewStore = new AddPartyOverlayStore();
     }
 
-    const onSave = () => {
-        if (name) {
-            setSavingView(true);
-            const party = new Party({ name });
-            party.create(currentUser)
-                .then(party => {
-                    props.updateParties();
-                    setDoneView(true);
-                })
-                .catch(err => {
-                    setErrorView(true);
-                    console.log(err);
-                })
-                .then(() => {
-                    setTimeout(() => {
-                        props.onClose();
-                        clearStates()
-                    }, 1000);
-                })
-        }
-        else {
-            setErrorMsg('Enter a valid name for a party')
+    componentDidUpdate() {
+        if (!this.props.isVisible) this.viewStore.clearStore();
+    }
+
+    onSave() {
+        if (this.viewStore.checkPartyName()) {
+            this.props.onSave(this.viewStore.partyName, this.viewStore)
+                .finally(() => closeDialogDelayed(this.props.onClose))
         }
     }
 
-    const onClose = () => {
-        setName("");
-        setErrorMsg("");
-        props.onClose();
-    };
-
-    return (
-        <PMBOverlay
-            title='Add a new party'
-            saveTitle='Add'
-            isVisible={props.isVisible}
-            onClose={onClose}
-            onSave={onSave}
-            showSavingView={showSavingView}
-            showDoneView={showDoneView}
-            showErrorView={showErrorView}
-        >
-            <Input
-                containerStyle={{marginVertical: 30}}
-                label='Party name'
-                placeholder='Scrinzh'
-                onChangeText={text => {
-                    setName(text);
-                    setErrorMsg("");
-                }}
-                labelStyle={{ fontWeight: "500"}}
-                errorStyle={{ color: 'red' }}
-                errorMessage={errorMsg}
-            />
-        </PMBOverlay>
-    )
+    render() {
+        return (
+            <PMBOverlay
+                title='Add a new party'
+                saveTitle='Add'
+                isVisible={this.props.isVisible}
+                onClose={this.props.onClose}
+                onSave={this.onSave.bind(this)}
+                asyncSaveStore={this.viewStore}
+            >
+                <Input
+                    containerStyle={{marginVertical: 30}}
+                    label='Party name'
+                    placeholder='Scrinzh'
+                    onChangeText={this.viewStore.setPartyName}
+                    labelStyle={{ fontWeight: "500"}}
+                    errorStyle={{ color: 'red' }}
+                    errorMessage={this.viewStore.errorMessage}
+                />
+            </PMBOverlay>
+        )
+    }
 }
-
-export default AddPartyOverlay;

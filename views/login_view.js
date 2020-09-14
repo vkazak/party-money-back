@@ -4,6 +4,7 @@ import { StyleSheet, View, AsyncStorage } from 'react-native';
 import { APP_COLOR, APP_FONT } from '../styles';
 import { observer } from 'mobx-react';
 import { LoginState } from '../store/user.store';
+import { StoreContext } from '../context/store_context';
 
 const checkExistingAccessTokenAndGo = async () => {
     try {
@@ -19,9 +20,9 @@ const checkExistingAccessTokenAndGo = async () => {
 
 @observer
 class LoginView extends React.Component {
-    constructor(props) {
-        super(props);
-        this.userStore = props.userStore;
+    constructor(props, context) {
+        super(props, context);
+        this.userStore = context.userStore;
     }
 
     render() {
@@ -47,6 +48,7 @@ class LoginView extends React.Component {
         )
     }
 }
+LoginView.contextType = StoreContext;
 
 const style = StyleSheet.create({
     container: {

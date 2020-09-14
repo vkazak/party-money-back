@@ -1,34 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import { ListItem, Icon } from 'react-native-elements';
+import { observer } from 'mobx-react';
+import React from 'react';
+import { Icon, ListItem } from 'react-native-elements';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
+import { StoreContext } from '../../context/store_context';
+import { DataStatus } from '../../store/pattern_store/async_data.store';
+import { DummiesViewStore, DummyViewDialogs } from '../../store/view_store/dummies_view_store/dummies_view.store';
 import { AppStyles, APP_COLOR } from '../../styles';
-import { UserContext } from '../../context/user_context';
-import AddDummyOverlay from './add_dummy_overlay';
+import { AddDummyOverlay } from './add_dummy_overlay';
 
-const DummiesListView = (props) => {
-    const currentUser = React.useContext(UserContext);
-
-    const [loading, setLoading] = useState(true);
-    const [dummies, setDummies] = useState([]);
-    const [isAddDialogVisible, setAddDialogVisible] = useState(false);
-
-    const onDataLoaded = (dummies) => {
-        setDummies(dummies);
-        setLoading(false);
+@observer
+export class DummiesListView extends React.Component {
+    constructor(props, context) {
+        super(props);
+        this.viewStore = new DummiesViewStore();
+        this.dummiesStore = context.dummiesStore;
     }
 
-    const loadDummiesAsUsers = () => {
-        currentUser.getDummiesAsUsers()
-            .then(onDataLoaded)
-            .catch(console.log)
-    };
+    componentDidMount() {
+        this.dummiesStore.fetchMembersFromServer();
+    }
 
-    useEffect(() => {
-        loadDummiesAsUsers();
-    }, []);
-
-    const renderDummyItem = (dummy) => {
+    renderDummyItem(dummy) {
         return(
             <ListItem 
                 title={dummy.name}
@@ -42,25 +34,30 @@ const DummiesListView = (props) => {
         );
     };
 
-    return(
-        <BodyContainer>
-            <ListContainer isLoading={loading}>
-                { dummies.map(renderDummyItem) }          
-            </ListContainer>
-            <Icon 
-                containerStyle={AppStyles.floatingIconButton}
-                name='add'
-                color={APP_COLOR}
-                onPress={() => setAddDialogVisible(true)}
-                reverse
-            />
-            <AddDummyOverlay
-                isVisible={isAddDialogVisible}
-                onClose={() => setAddDialogVisible(false)}
-                updateDummies={loadDummiesAsUsers}
-            />
-        </BodyContainer>
-    )
+    render() {
+        return(
+            <BodyContainer>
+                <ListContainer 
+                    isLoading={this.dummiesStore.dataStatus === DataStatus.LOADING} 
+                    refreshing={this.dummiesStore.dataStatus === DataStatus.UPDATING} 
+                    onRefresh={() => this.dummiesStore.forceFetchMembersFromServer()}
+                >
+                    { this.dummiesStore.dummies.map(this.renderDummyItem) }          
+                </ListContainer>
+                <Icon 
+                    containerStyle={AppStyles.floatingIconButton}
+                    name='add'
+                    color={APP_COLOR}
+                    onPress={() => this.viewStore.showAddDummyDialog()}
+                    reverse
+                />
+                <AddDummyOverlay
+                    isVisible={this.viewStore.visibleDialog === DummyViewDialogs.ADD_DUMMY}
+                    onSave={this.dummiesStore.createDummy.bind(this.dummiesStore)}
+                    onClose={() => this.viewStore.closeDialog()}
+                />
+            </BodyContainer>
+        )
+    }
 }
-
-export default DummiesListView;
+DummiesListView.contextType = StoreContext;

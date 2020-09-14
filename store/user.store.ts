@@ -1,8 +1,8 @@
-import { User } from '../entities/user.entity'; // temporary solution. Change convertation userInfo to user in future
-import * as Google from 'expo-google-app-auth';
-import { makeFullUrl } from '../utils';
 import axios from 'axios';
-import { observable, action } from "mobx";
+import * as Google from 'expo-google-app-auth';
+import { action, observable } from "mobx";
+import { Member } from '../entities/member.entity';
+import { makeFullUrl } from '../utils';
 
 export const LoginState = {
     INIT: 'INIT',
@@ -19,8 +19,8 @@ const config = {
 
 export class UserStore {
     @observable loginState = LoginState.INIT;
-    @observable error = '';
-    @observable user = null; 
+    @observable error: string = '';
+    user: Member | undefined;
 
     @action.bound
     setLoginStatePending() {
@@ -28,7 +28,7 @@ export class UserStore {
     }
 
     @action.bound
-    setLoginStateError(err) {
+    setLoginStateError(err: string) {
         this.loginState = LoginState.ERROR;
         this.error = err;
     }
@@ -41,9 +41,9 @@ export class UserStore {
     async tryToLogIn() {
         try {
             this.setLoginStatePending();
-            const { type, accessToken, user } = await Google.logInAsync(config);
-            if (type == 'success') { // smells TODO
-                const appUser = await this.convertGoogleUserInfoToAppUser(user);
+            const logInResult = await Google.logInAsync(config);
+            if (logInResult.type == 'success') { // smells TODO
+                const appUser = await this.convertGoogleUserInfoToAppUser(logInResult.user);
                 this.user = appUser;
                 this.setLoginStateSuccess();
             }
@@ -57,7 +57,7 @@ export class UserStore {
         try {
             const response = await axios.post(makeFullUrl('/users/google_user_upd'), { userInfo });
             const dbUser = response.data;
-            return ( new User(dbUser) );
+            return ( new Member(dbUser) );
         } catch(err) {
             this.setLoginStateError(err);
         }

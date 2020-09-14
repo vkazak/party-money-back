@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { observer } from 'mobx-react';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
 import PMBDivider from '../../components/pmb_divider';
 import PMBOverlay from '../../components/pmb_overlay';
+import { StoreContext } from '../../context/store_context';
 import { APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN, APP_RED } from '../../styles';
-import { UserContext } from '../../context/user_context';
-import { ListContainer, LoadIndicatorView } from '../../components/component_containers';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const AmountInfo = (props) => {
     return (
@@ -38,14 +38,14 @@ const amountInfoStyle = StyleSheet.create({
 
 const DebtItem = (props) => {
     const debt = props.debt;
-    const currentUser = React.useContext(UserContext);
+    const currentUserId = React.useContext(StoreContext).userStore.user._id;
     
     const opacity = '30';
     let itemColor = APP_COLOR;
-    if (debt.from._id == currentUser._id){
+    if (debt.fromMember._id == currentUserId){
         itemColor = APP_RED;
     }
-    else if (debt.to._id == currentUser._id) {
+    else if (debt.toMember._id == currentUserId) {
         itemColor = APP_GREEN;
     }
     const backgroundColor = itemColor + opacity;
@@ -66,16 +66,16 @@ const DebtItem = (props) => {
 
     return (
         <View style={[debtStyle.container, {backgroundColor: backgroundColor}]}>
-            <UserBlock user={debt.from} />
+            <UserBlock user={debt.fromMember} />
             <View style={debtStyle.amountBlock}>
-                <Text style={[debtStyle.amount, {color: itemColor}]}>{debt.amount}</Text>
+                <Text style={[debtStyle.amount, {color: itemColor}]}>{debt.amount.toFixed(1)}</Text>
                 <Icon 
                     name='md-arrow-forward'
                     type='ionicon'
                     color={itemColor}
                 />
             </View>
-            <UserBlock user={debt.to} />
+            <UserBlock user={debt.toMember} />
         </View>
     )
 }
@@ -114,6 +114,62 @@ const debtStyle = StyleSheet.create({
     }
 });
 
+@observer
+export class DebtsOverlay extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this.paymentsStore = context.partyReviewStore.paymentsStore;
+    }
+
+    renderDebtItem(debt) {
+        return (
+            <DebtItem 
+                debt={debt} 
+                key={debt.fromMember._id + debt.toMember._id}
+            />
+        )
+    }
+
+    render() {
+        return (
+            <PMBOverlay
+                title='Debts report'
+                saveTitle='OK'
+                isVisible={this.props.isVisible}
+                onClose={this.props.onClose}
+                onSave={this.props.onClose}
+            >
+                <View style={{marginBottom: 50}}>
+                    <View style={style.headerContainer}>
+                        <AmountInfo 
+                            title='Per person'
+                            amount={this.paymentsStore.debtsReport.maxPerPerson.toFixed(1)}
+                        />
+                        <PMBDivider/>
+                        <AmountInfo
+                            title='Total spent'
+                            amount={this.paymentsStore.debtsReport.summaryAmount.toFixed(1)}
+                        />
+                    </View>
+                    <ScrollView>
+                        { this.paymentsStore.debtsReport.debts.map(this.renderDebtItem) }
+                    </ScrollView>
+                </View>
+            </PMBOverlay>
+        )
+    }
+}
+
+DebtsOverlay.contextType = StoreContext;
+
+const style = StyleSheet.create({
+    headerContainer: {
+        height: 50,
+        flexDirection: 'row',
+        marginBottom: 8
+    }
+});
+/*
 const DebtsOverlay = (props) => {
     
     const [loading, setLoading] = useState(true);
@@ -183,13 +239,4 @@ const DebtsOverlay = (props) => {
         </PMBOverlay>
     )
 }
-
-const style = StyleSheet.create({
-    headerContainer: {
-        height: 50,
-        flexDirection: 'row',
-        marginBottom: 8
-    }
-});
-
-export default DebtsOverlay;
+*/

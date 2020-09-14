@@ -1,5 +1,5 @@
 {
-    "_serverUri" : "http://192.168.100.3:3000",
+    "serverUri" : "http://192.168.100.6:3000",
     "avatarUrl" : "/avatar.jpeg",
-    "serverUri" : "https://party-money-back-server.herokuapp.com"
+    "_serverUri" : "https://party-money-back-server.herokuapp.com"
 }

@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { observer } from 'mobx-react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
 import { BodyContainer, ListContainer } from '../../components/component_containers';
 import PMBDivider from '../../components/pmb_divider';
+import { StoreContext } from '../../context/store_context';
+import { DataStatus } from '../../store/pattern_store/async_data.store';
+import { PartyPaymentsViewDialogs, PartyPaymentsViewStore } from '../../store/view_store/party_payments_view_store/party_payments_view.store';
 import { AppStyles, APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
-import AddPaymentOverlay from './add_payment_overlay';
-import DebtsOverlay from './debts_overlay';
-import { UserContext } from '../../context/user_context';
+import { AddPaymentOverlay } from './add_payment_overlay';
+import { DebtsOverlay } from './debts_overlay';
 
 
 const PaymentCard = (props) => {
-    const currentUser = React.useContext(UserContext);
     const payment = props.payment;
-    const isCurrentUser = payment.user._id == currentUser._id;
+    const isCurrentUser = payment.member._id === useContext(StoreContext).userStore.user._id;
 
     const cardColor = isCurrentUser ? APP_GREEN : '#ffffff';
     const nameColor = isCurrentUser ? 'white' : '#00000090';
@@ -26,11 +28,11 @@ const PaymentCard = (props) => {
                 <View style={style.leftBox}>
                     <View style={style.userBox}>
                         <Avatar 
-                            source={{ url: payment.user.photoUrl }}
+                            source={{ url: payment.member.photoUrl }}
                             size={40}
                             rounded
                         />
-                        <Text style={[style.userName, {color: nameColor}]}>{payment.user.name}</Text>
+                        <Text style={[style.userName, {color: nameColor}]}>{payment.member.name}</Text>
                     </View>
                     <View style={style.descriptionBox}>
                         <Text style={style.description} numberOfLines={3}>{payment.description}</Text>
@@ -45,74 +47,71 @@ const PaymentCard = (props) => {
     )
 }
 
-const PartyPaymentsView = (props) => {
-    const [loading, setLoading] = useState(true);
-    const [payments, setPayments] = useState([]);
-    const [isAddPaymentVisible, setAddPaymentVisible] = useState(false);
-    const [isDebtsVisible, setDebtsVisible] = useState(false);
-
-    const currentUser = React.useContext(UserContext);
-    const party = props.route.params.party;
-
-    const onDataLoaded = (payments) => {
-        setPayments(payments);
-        setLoading(false);
-    }
-    const loadPayments = () => {
-        party.getPayments()
-            .then(onDataLoaded)
-            .catch(console.log);
+@observer
+export class PartyPaymentsView extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this.paymentsStore = context.partyReviewStore.paymentsStore;
+        this.viewStore = new PartyPaymentsViewStore();
     }
 
-    useEffect(() => {
-        loadPayments();
-    }, []);
+    componentDidMount() {
+        const fetchMembersAndPayments = async () => {
+            await this.context.partyReviewStore.membersStore.fetchPartyMembersFromServer();
+            this.paymentsStore.fetchPartyPaymentsFromServer();
+        };
+        fetchMembersAndPayments();
+    }
 
-    const renderPaymentItem = (payment) => {
+    renderPaymentItem(payment) {
         return (
             <PaymentCard
                 payment={payment}
-                currentUserId={currentUser._id}
                 key={payment._id}
             />
         )
     }
 
-    return (
-        <BodyContainer>
-            <View style={style.debtButtonBox}>
-                <Button
-                    title='Show summary'
-                    titleStyle={style.debtButtonTitle}
-                    buttonStyle={style.debtButton}
-                    onPress={() => setDebtsVisible(true)}
-                    raised
+    render() {
+        return (
+            <BodyContainer>
+                <View style={style.debtButtonBox}>
+                    <Button
+                        title='Show summary'
+                        titleStyle={style.debtButtonTitle}
+                        buttonStyle={style.debtButton}
+                        onPress={() => this.viewStore.showDebtsReviewDialog()}
+                        raised
+                    />
+                </View>
+                <ListContainer 
+                    isLoading={this.paymentsStore.dataStatus === DataStatus.LOADING} 
+                    refreshing={this.paymentsStore.dataStatus === DataStatus.UPDATING} 
+                    onRefresh={() => this.paymentsStore.forceFetchPartyPaymentsFromServer()}
+                    style={{marginTop: 60}}
+                >
+                    { this.paymentsStore.payments.map(this.renderPaymentItem.bind(this)) }
+                </ListContainer>
+                <Icon 
+                    containerStyle={AppStyles.floatingIconButton}
+                    name='add'
+                    color={APP_COLOR}
+                    onPress={() => this.viewStore.showAddPaymentDialog()}
+                    reverse
                 />
-            </View>
-            <ListContainer isLoading={loading} style={{marginTop: 60}}>
-                {payments.map(renderPaymentItem)}
-            </ListContainer>
-            <Icon 
-                containerStyle={AppStyles.floatingIconButton}
-                name='add'
-                color={APP_COLOR}
-                onPress={() => setAddPaymentVisible(true)}
-                reverse
-            />
-            <AddPaymentOverlay
-                isVisible={isAddPaymentVisible}
-                updatePayments={loadPayments}
-                onClose={() => setAddPaymentVisible(false)}
-                party={party}
-            />
-            <DebtsOverlay
-                isVisible={isDebtsVisible}
-                onClose={() => setDebtsVisible(false)}
-                party={party}
-            />
-        </BodyContainer>
-    )
+                <AddPaymentOverlay
+                    isVisible={this.viewStore.visibleDialog === PartyPaymentsViewDialogs.ADD_PAYMENT}
+                    onClose={() => this.viewStore.closeDialog()}
+                />{
+                <DebtsOverlay
+                    isVisible={this.viewStore.visibleDialog === PartyPaymentsViewDialogs.DEBTS_REVIEW}
+                    onClose={() => this.viewStore.closeDialog()}
+                />}
+            </BodyContainer>
+        )
+    }
 }
+PartyPaymentsView.contextType = StoreContext;
 
 const style = StyleSheet.create({
     paymentCardContainer: {

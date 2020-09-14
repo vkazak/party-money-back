@@ -1,18 +1,20 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { loadAsync } from 'expo-font';
+import { observer } from 'mobx-react';
 import React from 'react';
 import { Text } from 'react-native';
+import { StoreContext } from './context/store_context';
 import { TabNavigator } from './navigation/tab_navigation';
+import { MainStore } from './store/main.store';
+import { LoginState } from './store/user.store';
 import LoginView from './views/login_view';
-import { UserContext } from './context/user_context';
-import { UserStore, LoginState } from './store/user.store';
-import { observer } from 'mobx-react';
 
 @observer
 export default class App extends React.Component {
     constructor(props) {
         super(props);
-        this.userStore = new UserStore();
+        this.store = new MainStore();
+        this.userStore = this.store.userStore;
         this.state = {
             isFontLoaded: false
         }
@@ -31,15 +33,18 @@ export default class App extends React.Component {
         if (this.state.isFontLoaded) {
             if (this.userStore.loginState == LoginState.SUCCESS) {
                 return (
-                    <UserContext.Provider value={this.userStore.user}>
+                    <StoreContext.Provider value={this.store}>
                         <NavigationContainer>
                             <TabNavigator />
                         </NavigationContainer>
-                    </UserContext.Provider>
+                    </StoreContext.Provider>
                 )
             } else {
                 return (
-                    <LoginView userStore={this.userStore}/>
+                    <StoreContext.Provider value={this.store}>
+                        <LoginView/>
+                    </StoreContext.Provider>
+                   
                 )
             }
         }

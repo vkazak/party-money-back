@@ -1,121 +1,82 @@
 import { Picker } from '@react-native-community/picker';
-import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { observer } from 'mobx-react';
+import React from 'react';
 import { Input } from 'react-native-elements';
-import PMBOverlay from '../../components/pmb_overlay';
 import { LoadIndicatorView } from '../../components/component_containers';
-import { Payment } from '../../entities/payment.entity';
-import { UserContext } from '../../context/user_context';
+import PMBOverlay from '../../components/pmb_overlay';
+import { StoreContext } from '../../context/store_context';
+import { DataStatus } from '../../store/pattern_store/async_data.store';
+import { AddPaymentOverlayStore } from '../../store/view_store/party_payments_view_store/add_payment_overlay.store';
+import { closeDialogDelayed } from '../../utils';
 
-const AddPaymentOverlay = (props) => {
-    const currentUser = React.useContext(UserContext);
-    
-    const [loading, setLoading] = useState(true);
-    const [users, setUsers] = useState([]);
-    const [pickedUserId, setUserId] = useState(currentUser._id);
-    const [description, setDescription] = useState("");
-    const [amount, setAmount] = useState(0);
-    const [showSavingView, setSavingView] = useState(false);
-    const [showDoneView, setDoneView] = useState(false);
-    const [showErrorView, setErrorView] = useState(false);
-
-    const party = props.party;
-
-    const onDataLoaded = (users) => {
-        setUsers(users);
-        setLoading(false);
-    }
-    const loadMembers = () => {
-        party.getUsersAndDummiesAsUsers()
-            .then(onDataLoaded)
-            .catch(console.log);
-    };
-    useEffect(() => {
-        if (props.isVisible) {
-            loadMembers();
-        }
-    }, [props.isVisible]);
-
-    const clearStates = () => {
-        setSavingView(false);
-        setDoneView(false);
-        setErrorView(false);
-        setUserId(currentUser._id);
-        setDescription("");
-        setAmount(0);
+@observer
+export class AddPaymentOverlay extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this.currentUserId = context.userStore.user._id;
+        this.paymentsStore = context.partyReviewStore.paymentsStore;
+        this.partyMembersStore = context.partyReviewStore.membersStore;
+        this.viewStore = new AddPaymentOverlayStore(this.currentUserId);
     }
 
-    const onClose = () => {
-        props.onClose();
-        clearStates();
+    componentDidMount() {
+        this.partyMembersStore.fetchPartyMembersFromServer();
     }
 
-    const onSave = () => {
-        if (amount > 1e9) {
-            
-        }
-        setSavingView(true);
-        const user = users.find(user => user._id == pickedUserId);
-        const payment = new Payment({party, user, description, amount});
-        payment.create()
-            .then(payment => {
-                props.updatePayments();
-                setDoneView(true);
-            })
-            .catch(err => {
-                setErrorView(true);
-                console.log(err);
-            })
-            .then(() => {
-                setTimeout(() => {
-                    onClose()
-                }, 1000);
-            });
+    componentDidUpdate() {
+        if (!this.props.isVisible) this.viewStore.clearStore();
     }
 
-    return(
-        <PMBOverlay
-            title='Add new payment'
-            saveTitle='Add'
-            isVisible={props.isVisible}
-            onClose={onClose}
-            onSave={onSave}
-            showSavingView={showSavingView}
-            showDoneView={showDoneView}
-            showErrorView={showErrorView}
-        >
-            <LoadIndicatorView isLoading={loading}>
-                <Picker 
-                    mode='dropdown'
-                    selectedValue={pickedUserId}
-                    onValueChange={(userId, itemIndex) =>
-                        setUserId(userId)
-                    }
+    onSave() {
+        this.paymentsStore.addPaymentToParty(
+            this.viewStore.pickedMemberId,
+            this.viewStore.amount,
+            this.viewStore.description,
+            this.viewStore
+        ).finally(() => closeDialogDelayed(this.props.onClose));
+    }
+
+    render() {
+        return(
+            <PMBOverlay
+                title='Add new payment'
+                saveTitle='Add'
+                isVisible={this.props.isVisible}
+                onClose={this.props.onClose}
+                onSave={this.onSave.bind(this)}
+                asyncSaveStore={this.viewStore}
+            >
+                <LoadIndicatorView 
+                    isLoading={this.partyMembersStore.dataStatus === DataStatus.LOADING}
                 >
-                    {
-                        users.map((user) => {
-                            return(
-                                <Picker.Item label={user.name} value={user._id} key={user._id}/>
+                    <Picker 
+                        mode='dropdown'
+                        selectedValue={ this.viewStore.selectedMemberId }
+                        onValueChange={ (memberId) => this.viewStore.setPickedMemberId(memberId) }
+                    >
+                        {
+                            this.partyMembersStore.members.map(member => 
+                                <Picker.Item label={member.name} value={member._id} key={member._id}/>
                             )
-                        })
-                    }
-                </Picker>
-                <Input
-                    label='Amount of money'
-                    onChangeText={text => setAmount(Number(text))}
-                    labelStyle={{ fontWeight: "500"}}
-                    keyboardType='number-pad'
-                    returnKeyType='done'
-                />
-                <Input
-                    label='Payment desription'
-                    placeholder='Description...'
-                    onChangeText={text => setDescription(text)}
-                    labelStyle={{ fontWeight: "500"}}
-                />
-            </LoadIndicatorView>
-        </PMBOverlay>
-    )
+                        }
+                    </Picker>
+                    <Input
+                        label='Amount of money'
+                        onChangeText={ amount => this.viewStore.setAmount(Number(amount)) }
+                        labelStyle={{ fontWeight: "500"}}
+                        keyboardType='number-pad'
+                        returnKeyType='done'
+                    />
+                    <Input
+                        label='Payment desription'
+                        placeholder='Description...'
+                        onChangeText={ description => this.viewStore.setDescription(description) }
+                        labelStyle={{ fontWeight: "500"}}
+                    />
+                </LoadIndicatorView>
+            </PMBOverlay>
+        )
+    }
 }
 
-export default AddPaymentOverlay;
+AddPaymentOverlay.contextType = StoreContext;

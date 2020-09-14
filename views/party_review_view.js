@@ -39,13 +39,11 @@ const cardStyle = StyleSheet.create({
 })
 
 const PartyReviewView = (props) => {
-    const party = props.route.params.party;
-
     const onPressPayments = () => {
-        props.navigation.navigate("Party payments", {party})
+        props.navigation.navigate("Party payments")
     };
     const onPressUsers = () => {
-        props.navigation.navigate("Users in party", {party})
+        props.navigation.navigate("Users in party")
     };
     return(
         <BodyContainer>

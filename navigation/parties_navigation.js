@@ -1,10 +1,10 @@
 import React from 'react';
 import { NavigatorStyle } from '../styles';
 import { createStackNavigator } from "@react-navigation/stack";
-import PartiesListView from '../views/parties_view/parties_view';
+import { PartiesListView } from '../views/parties_view/parties_view';
 import PartyPaymentsView from '../views/party_payments_view/party_payments_view';
 import PartyReviewView from '../views/party_review_view';
-import PartyUsersView from '../views/party_users_view/party_users_view';
+import { PartyMembersView } from '../views/party_members_view/party_members_view';
 
 const Stack = createStackNavigator();
 
@@ -25,7 +25,7 @@ export const PartiesNavigator = (props) => {
             />
             <Stack.Screen
                 name="Users in party"
-                component={PartyUsersView}
+                component={PartyMembersView}
             />
         </Stack.Navigator>
     )

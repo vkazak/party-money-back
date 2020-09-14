@@ -1,38 +1,50 @@
 import { Button, Icon } from 'react-native-elements';
 import { Text, View, StyleSheet, ActivityIndicator, Modal } from 'react-native';
 import React from 'react';
+import { SaveStatus } from '../store/pattern_store/async_save.store';
+import { observer } from 'mobx-react';
 const { APP_GREEN, APP_RED, APP_COLOR, APP_FONT } = require("../styles");
 
-const IndicatorScreen = (props) => {
-    let showLoading = props.showSavingView && !(props.showDoneView || props.showErrorView);
-    
-    return(
-        <View style={props.showSavingView ? style.savingView : style.hidden}>
-            <ActivityIndicator
-                size="large"
-                color={APP_COLOR}
-                style={showLoading ? style.indicator : style.hidden}
-                animating={Boolean(showLoading)}
-            />
-            <Icon
-                name="check-circle"
-                color={APP_GREEN}
-                size={60}
-                style={props.showDoneView ? style.indicator : style.hidden}
-            />
-            <Icon
-                name="highlight-off"
-                color={APP_RED}
-                size={60}
-                style={props.showErrorView ? style.indicator : style.hidden}
-            />
-        </View>
-    )
+@observer
+class IndicatorScreen extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    getIndicator() {
+        switch(this.props.asyncSaveStore.saveStatus) {
+            case SaveStatus.PENDING:
+                return <ActivityIndicator
+                    size="large"
+                    color={APP_COLOR}
+                />;
+            case SaveStatus.SUCCESS:
+                return <Icon
+                    name="check-circle"
+                    color={APP_GREEN}
+                    size={60}
+                />;
+            case SaveStatus.ERROR:
+                return <Icon
+                    name="highlight-off"
+                    color={APP_RED}
+                    size={60}
+                />;
+            default: return null;
+        }
+    }
+
+    render() {
+        return(
+            <View style={this.props.asyncSaveStore.saveStatus === SaveStatus.INIT ? style.hidden : style.savingView}>
+                { this.getIndicator() }
+            </View>
+        )
+    }
 }
 
 const PMBOverlay = (props) => {
     const saveTitle = props.saveTitle || 'Save';
-
     return (
         <Modal
             visible={props.isVisible}
@@ -45,13 +57,10 @@ const PMBOverlay = (props) => {
                     <View style={style.header}>
                         <Text style={style.headerText}>{props.title}</Text>
                     </View>
-                    <View style={style.content}>{props.children}</View>
-                        
-                        <IndicatorScreen 
-                            showSavingView={props.showSavingView}
-                            showDoneView={props.showDoneView}
-                            showErrorView={props.showErrorView}
-                        />
+                    <View style={style.content}>{props.children}</View>  
+                    { props.asyncSaveStore &&
+                        <IndicatorScreen asyncSaveStore={props.asyncSaveStore}/> 
+                    }
                     <View style={style.footer}> 
                             <View style={style.footerFlexBox}>
                                 <View style={style.buttonFlexBox}> 
@@ -155,6 +164,7 @@ const style = StyleSheet.create({
         backgroundColor: APP_COLOR + 'dd'
     },
     savingView: {
+        zIndex: 10,
         flex: 1,
         justifyContent: "center",
         alignItems: "center",

@@ -1,1 +1,0 @@
-export const sortByCreatedAt = (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt);

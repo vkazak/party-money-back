@@ -1,82 +1,48 @@
-import React, { useState } from 'react';
+import { observer } from 'mobx-react';
+import React from 'react';
 import { Input } from 'react-native-elements';
 import PMBOverlay from '../../components/pmb_overlay';
-import { UserContext } from '../../context/user_context';
-import { Dummy } from '../../entities/dummy.entity';
+import { AddDummyOverlayStore } from '../../store/view_store/dummies_view_store/add_dummy_overlay.store';
+import { closeDialogDelayed } from '../../utils';
 
-const AddDummyOverlay = (props) => {
-    const currentUser = React.useContext(UserContext);
-
-    const [name, setName] = useState("");
-    const [errorMsg, setErrorMsg] = useState("");
-    const [showSavingView, setSavingView] = useState(false);
-    const [showDoneView, setDoneView] = useState(false);
-    const [showErrorView, setErrorView] = useState(false);
-
-    const clearStates = () => {
-        setName("");
-        setErrorMsg("");
-        setSavingView(false);
-        setDoneView(false);
-        setErrorView(false);
+@observer
+export class AddDummyOverlay extends React.Component {
+    constructor(props) {
+        super(props);
+        this.viewStore = new AddDummyOverlayStore();
     }
 
-    const onSave = () => {
-        if (name) {
-            setSavingView(true);
-            const dummy = new Dummy({ name });
-            dummy.create(currentUser)
-                .then(dummy => {
-                    props.updateDummies();
-                    setDoneView(true);
-                })
-                .catch(err => {
-                    setErrorView(true);
-                    console.log(err);
-                })
-                .then(() => {
-                    setTimeout(() => {
-                        props.onClose();
-                        clearStates()
-                    }, 1000);
-                })
-        }
-        else {
-            setErrorMsg('Enter a valid name for a dummy')
+    componentDidUpdate() {
+        if (!this.props.isVisible) this.viewStore.clearStore();
+    }
+
+    onSave() {
+        if (this.viewStore.checkDummyName()) {
+            this.props.onSave(this.viewStore.dummyName, this.viewStore)
+                .finally(() => closeDialogDelayed(this.props.onClose))
         }
     }
 
-    const onClose = () => {
-        setName("");
-        setErrorMsg("");
-        props.onClose();
-    };
-
-    return (
-        <PMBOverlay
-            title='Add a new dummy'
-            saveTitle='Add'
-            isVisible={props.isVisible}
-            onClose={onClose}
-            onSave={onSave}
-            showSavingView={showSavingView}
-            showDoneView={showDoneView}
-            showErrorView={showErrorView}
-        >
-            <Input
-                containerStyle={{marginVertical: 30}}
-                label='Dummy user name'
-                placeholder='Vovan'
-                onChangeText={text => {
-                    setName(text);
-                    setErrorMsg("");
-                }}
-                labelStyle={{ fontWeight: "500"}}
-                errorStyle={{ color: 'red' }}
-                errorMessage={errorMsg}
-            />
-        </PMBOverlay>
-    )
+    render() {
+        return (
+            <PMBOverlay
+                title='Add a new dummy'
+                saveTitle='Add'
+                isVisible={this.props.isVisible}
+                onClose={this.props.onClose}
+                onSave={this.onSave.bind(this)}
+                asyncSaveStore={this.viewStore}
+            >
+                <Input
+                    containerStyle={{marginVertical: 30}}
+                    label='Dummy user name'
+                    placeholder='Vovan'
+                    onChangeText={this.viewStore.setDummyName}
+                    labelStyle={{ fontWeight: "500"}}
+                    errorStyle={{ color: 'red' }}
+                    errorMessage={this.viewStore.errorMessage}
+                />
+            </PMBOverlay>
+        )
+    }
 }
-
-export default AddDummyOverlay;
