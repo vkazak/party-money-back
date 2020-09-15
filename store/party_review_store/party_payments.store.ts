@@ -1,5 +1,6 @@
 import { computed } from "mobx";
 import { Debt, DebtsReport } from "../../entities/debts_report.entity";
+import { Member } from "../../entities/member.entity";
 import { Payment } from "../../entities/payment.entity";
 import { makeFullUrl, sortByCreatedAt } from "../../utils";
 import { MainStore } from "../main.store";
@@ -44,7 +45,8 @@ export class PartyPaymentsStore extends EntitiesStore<Payment> {
     }
 
     async addPaymentToParty(
-        memberId: string, 
+        member: Member, 
+        forMembers: Array<Member>,
         amount: number, 
         description: string, 
         asyncSaveStore: AsyncSaveStore
@@ -54,12 +56,15 @@ export class PartyPaymentsStore extends EntitiesStore<Payment> {
             amount, 
             description
         };
-        const member = this.partyReviewStore.membersStore.getById(memberId);
-        if (member?.isDummy) {
-            paymentToInsert.dummyId = memberId;
+        if (member.isDummy) {
+            paymentToInsert.dummyId = member._id;
         } else {
-            paymentToInsert.userId = memberId;
+            paymentToInsert.userId = member._id;
         }
+        paymentToInsert.forDummiesIds = forMembers.filter(member => member.isDummy).map(member => member._id);
+        paymentToInsert.forUsersIds = forMembers.filter(member => !member.isDummy).map(member => member._id);
+        console.log(paymentToInsert);
+        
         this.createEntity(
             makeFullUrl(`/payments/add`),
             paymentToInsert,

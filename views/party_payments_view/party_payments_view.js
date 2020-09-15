@@ -8,7 +8,7 @@ import { StoreContext } from '../../context/store_context';
 import { DataStatus } from '../../store/pattern_store/async_data.store';
 import { PartyPaymentsViewDialogs, PartyPaymentsViewStore } from '../../store/view_store/party_payments_view_store/party_payments_view.store';
 import { AppStyles, APP_COLOR, APP_FONT, APP_FONT_BOLD, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
-import { AddPaymentOverlay } from './add_payment_overlay';
+//import { AddPaymentOverlay } from './add_payment_overlay';
 import { DebtsOverlay } from './debts_overlay';
 
 
@@ -96,17 +96,17 @@ export class PartyPaymentsView extends React.Component {
                     containerStyle={AppStyles.floatingIconButton}
                     name='add'
                     color={APP_COLOR}
-                    onPress={() => this.viewStore.showAddPaymentDialog()}
+                    onPress={() => this.props.navigation.navigate("Payment members")}
                     reverse
                 />
-                <AddPaymentOverlay
+                {/*<AddPaymentOverlay
                     isVisible={this.viewStore.visibleDialog === PartyPaymentsViewDialogs.ADD_PAYMENT}
                     onClose={() => this.viewStore.closeDialog()}
-                />{
+                />*/}
                 <DebtsOverlay
                     isVisible={this.viewStore.visibleDialog === PartyPaymentsViewDialogs.DEBTS_REVIEW}
                     onClose={() => this.viewStore.closeDialog()}
-                />}
+                />
             </BodyContainer>
         )
     }

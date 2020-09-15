@@ -4,7 +4,7 @@ export class Member {
     _id: string;
     name: string;
     photoUrl: string = avatarUrl;
-    email: string = '';
+    email: string | undefined;
     createdAt: Date;
     isDummy: boolean;
 

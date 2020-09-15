@@ -54,8 +54,18 @@ export class PartyMembersView extends React.Component {
                     reverse
                 />
                 <AddMembersOverlay
+                    title='Add members to party'
+                    saveTitle='Add'
                     isVisible={this.viewStore.visibleDialog === PartyMembersViewDialogs.ADD_MEMBERS}
                     onClose={() => this.viewStore.closeDialog()}
+                    onSave={this.membersStore.addMembersToParty.bind(this.membersStore)}
+                    isLoading={this.context.dummiesStore.dataStatus === DataStatus.isLoading || 
+                               this.context.partyReviewStore.membersStore.dataStatus === DataStatus.isLoading}
+                    multiplePick={true}
+                    store={this.context.partyReviewStore.membersStore}
+                    getDataFromStore={(store) => store.membersOutOfParty}
+                    loadData={() => this.context.dummiesStore.fetchMembersFromServer()}
+                    closeDelayedAfterSave={true}
                 />
             </BodyContainer>
         )

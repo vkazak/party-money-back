@@ -6,7 +6,7 @@ import { LoadIndicatorView } from '../../components/component_containers';
 import PMBOverlay from '../../components/pmb_overlay';
 import { StoreContext } from '../../context/store_context';
 import { DataStatus } from '../../store/pattern_store/async_data.store';
-import { AddPaymentOverlayStore } from '../../store/view_store/party_payments_view_store/add_payment_overlay.store';
+//import { AddPaymentOverlayStore } from '../../store/view_store/party_payments_view_store/add_payment_overlay.store';
 import { closeDialogDelayed } from '../../utils';
 
 @observer
@@ -16,7 +16,7 @@ export class AddPaymentOverlay extends React.Component {
         this.currentUserId = context.userStore.user._id;
         this.paymentsStore = context.partyReviewStore.paymentsStore;
         this.partyMembersStore = context.partyReviewStore.membersStore;
-        this.viewStore = new AddPaymentOverlayStore(this.currentUserId);
+        //this.viewStore = new AddPaymentOverlayStore(this.currentUserId);
     }
 
     componentDidMount() {
