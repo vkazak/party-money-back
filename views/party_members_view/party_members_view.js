@@ -6,7 +6,7 @@ import { StoreContext } from '../../context/store_context';
 import { DataStatus } from '../../store/pattern_store/async_data.store';
 import { PartyMembersViewDialogs, PartyMembersViewStore } from '../../store/view_store/party_members_view_store/party_members_view.store';
 import { AppStyles, APP_COLOR } from '../../styles';
-import { AddMembersOverlay } from './add_members_overlay';
+import { AddMembersOverlay } from '../../components/add_members_overlay';
 
 @observer
 export class PartyMembersView extends React.Component {

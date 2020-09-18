@@ -5,8 +5,8 @@ import { PartiesListView } from '../views/parties_view/parties_view';
 import PartyPaymentsView from '../views/party_payments_view/party_payments_view';
 import PartyReviewView from '../views/party_review_view';
 import { PartyMembersView } from '../views/party_members_view/party_members_view';
-import { PaymentMembersView } from '../views/party_payments_view/add_edit_payment_view/payment_members_view';
-import { PaymentInfoView } from '../views/party_payments_view/add_edit_payment_view/payment_info_view';
+import { PaymentMembersView } from '../views/add_edit_payment_view/payment_members_view';
+import { PaymentInfoView } from '../views/add_edit_payment_view/payment_info_view';
 
 const Stack = createStackNavigator();
 

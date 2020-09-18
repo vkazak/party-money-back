@@ -63,7 +63,6 @@ export class PartyPaymentsStore extends EntitiesStore<Payment> {
         }
         paymentToInsert.forDummiesIds = forMembers.filter(member => member.isDummy).map(member => member._id);
         paymentToInsert.forUsersIds = forMembers.filter(member => !member.isDummy).map(member => member._id);
-        console.log(paymentToInsert);
         
         this.createEntity(
             makeFullUrl(`/payments/add`),

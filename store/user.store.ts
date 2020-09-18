@@ -44,8 +44,10 @@ export class UserStore {
             const logInResult = await Google.logInAsync(config);
             if (logInResult.type == 'success') { // smells TODO
                 const appUser = await this.convertGoogleUserInfoToAppUser(logInResult.user);
-                this.user = appUser;
-                this.setLoginStateSuccess();
+                if (this.loginState !== LoginState.ERROR) {
+                    this.user = appUser;
+                    this.setLoginStateSuccess();
+                }
             }
         } catch (err) {
             this.setLoginStateError(err)

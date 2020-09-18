@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import { Input } from 'react-native-elements';
+import { PMBInput } from '../../components/pmb_input';
 import PMBOverlay from '../../components/pmb_overlay';
 import { AddPartyOverlayStore } from '../../store/view_store/parties_view_store/add_party_overlay.store';
 import { closeDialogDelayed } from '../../utils';
@@ -33,12 +34,11 @@ export class AddPartyOverlay extends React.Component {
                 onSave={this.onSave.bind(this)}
                 asyncSaveStore={this.viewStore}
             >
-                <Input
+                <PMBInput
                     containerStyle={{marginVertical: 30}}
                     label='Party name'
                     placeholder='Scrinzh'
                     onChangeText={this.viewStore.setPartyName}
-                    labelStyle={{ fontWeight: "500"}}
                     errorStyle={{ color: 'red' }}
                     errorMessage={this.viewStore.errorMessage}
                 />

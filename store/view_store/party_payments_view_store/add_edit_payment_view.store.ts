@@ -13,7 +13,7 @@ export class AddEditPaymentViewStore extends AsyncSaveStore {
     @observable whoPay: Member;
     @observable payFor: Array<Member> = [];
     @observable description: string = '';
-    private AMOUNT_ITERATION = 1;
+    private AMOUNT_ITERATION = 5;
     @observable amount: number = 0;
     @observable visibleDialog = AddEditPaymentDialogs.NONE;
     
@@ -29,13 +29,13 @@ export class AddEditPaymentViewStore extends AsyncSaveStore {
     }
 
     @action.bound
-    addAmunt() {
+    addAmount() {
         this.amount += this.AMOUNT_ITERATION;
     }
 
     @action.bound
     subAmount() {
-        this.amount -= this.AMOUNT_ITERATION;
+        this.amount = Math.max(0, this.amount - this.AMOUNT_ITERATION);
     }
 
     @action.bound

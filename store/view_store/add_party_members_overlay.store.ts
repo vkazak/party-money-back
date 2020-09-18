@@ -1,6 +1,6 @@
 import { action, computed, observable } from "mobx";
-import { Member } from "../../../entities/member.entity";
-import { AsyncSaveStore } from "../../pattern_store/async_save.store";
+import { Member } from "../../entities/member.entity";
+import { AsyncSaveStore } from "../pattern_store/async_save.store";
 
 export class AddPartyMembersOverlayStore extends AsyncSaveStore{
     multiplePick: boolean;

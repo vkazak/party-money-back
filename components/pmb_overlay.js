@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 const { APP_GREEN, APP_RED, APP_COLOR, APP_FONT } = require("../styles");
 
 @observer
-class IndicatorScreen extends React.Component {
+export class IndicatorScreen extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -172,8 +172,7 @@ const style = StyleSheet.create({
         width: "100%", 
         height: "100%", 
         backgroundColor: "rgba(255, 255, 255, 0.8)",
-        borderTopLeftRadius: borderRadius,
-        borderTopRightRadius: borderRadius,
+        borderRadius: borderRadius,
     },
     indicator: {
         paddingBottom: 60

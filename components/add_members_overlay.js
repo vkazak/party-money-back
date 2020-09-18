@@ -1,14 +1,14 @@
-import { autorun, computed } from 'mobx';
+import { computed } from 'mobx';
 import { observer } from 'mobx-react';
 import { PropTypes } from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import { Icon, ListItem } from 'react-native-elements';
-import { ListContainer } from '../../components/component_containers';
-import PMBOverlay from '../../components/pmb_overlay';
-import { StoreContext } from '../../context/store_context';
-import { AddPartyMembersOverlayStore } from '../../store/view_store/party_members_view_store/add_party_members_overlay.store';
-import { AppStyles, APP_COLOR } from '../../styles';
-import { closeDialogDelayed } from '../../utils';
+import { ListContainer } from './component_containers';
+import PMBOverlay from './pmb_overlay';
+import { StoreContext } from '../context/store_context';
+import { AddPartyMembersOverlayStore } from '../store/view_store/add_party_members_overlay.store';
+import { AppStyles, APP_COLOR } from '../styles';
+import { closeDialogDelayed } from '../utils';
 
 @observer
 class MemberAndCheckBoxItem extends React.Component {
