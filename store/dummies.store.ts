@@ -36,7 +36,7 @@ export class DummiesStore extends EntitiesStore<Member> {
         try {
             this.setFetchingStarted();
             const fetchDummies = this.fetchEntitiesFromServer(
-                makeFullUrl(`/dummies/by_user/${this.mainStore.userStore.user._id}`),
+                makeFullUrl(`/dummies/by_user/${this.mainStore.userStore.user?._id}`),
                 Member
             );
             const fetchUsers = this.fetchEntitiesFromServer(makeFullUrl('/users'), Member);
@@ -51,7 +51,7 @@ export class DummiesStore extends EntitiesStore<Member> {
     async createDummy(name: string, asyncSaveStore: AsyncSaveStore) {
         this.createEntity(
             makeFullUrl('/dummies/add'),
-            { name, userId: this.mainStore.userStore.user._id },
+            { name, userId: this.mainStore.userStore.user?._id },
             false,
             Member,
             asyncSaveStore,

@@ -3,26 +3,19 @@ import { Button, Icon } from 'react-native-elements';
 import { StyleSheet, View, AsyncStorage } from 'react-native';
 import { APP_COLOR, APP_FONT } from '../styles';
 import { observer } from 'mobx-react';
-import { LoginState } from '../store/user.store';
+import { LoginState, UserStore } from '../store/user.store';
 import { StoreContext } from '../context/store_context';
-
-const checkExistingAccessTokenAndGo = async () => {
-    try {
-        const accessToken = AsyncStorage.getItem('accessToken');
-        const userId = AsyncStorage.getItem('userId');
-        if (accessToken && userId) {
-            
-        }
-    } catch (err) {
-        console.log(err)
-    }
-}
+import { autorun } from 'mobx';
 
 @observer
 class LoginView extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.userStore = context.userStore;
+    }
+
+    componentDidMount() {
+        this.userStore.tryToLogInWithExistsCredentials();
     }
 
     render() {
@@ -32,7 +25,7 @@ class LoginView extends React.Component {
                     buttonStyle={style.button}
                     titleStyle={style.title}
                     title='Log in with Google'
-                    onPress={() => this.userStore.tryToLogIn()}
+                    onPress={() => this.userStore.getNewTokensAndLogIn()}
                     disabled={this.userStore.loginState == LoginState.PENDING}
                     icon={
                         <Icon

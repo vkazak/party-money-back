@@ -17,7 +17,7 @@ export default class App extends React.Component {
         this.userStore = this.store.userStore;
         this.state = {
             isFontLoaded: false
-        }
+        };
     }
 
     componentDidMount() {

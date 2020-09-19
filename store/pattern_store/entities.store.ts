@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../api_middleware/api_client';
 import { action, observable } from 'mobx';
 import { AsyncDataStore } from './async_data.store';
 import { AsyncSaveStore } from './async_save.store';

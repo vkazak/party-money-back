@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from '../../api_middleware/api_client';
 import { autorun, computed } from "mobx";
 import { Member } from "../../entities/member.entity";
 import { makeFullUrl } from "../../utils";

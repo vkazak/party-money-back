@@ -36,7 +36,7 @@ export class PartiesStore extends EntitiesStore<Party> {
     async forceFetchPartiesFromServer() {
         this.setFetchingStarted();
         const parties = await this.fetchEntitiesFromServer(
-            makeFullUrl(`/parties/by_user/${this.mainStore.userStore.user._id}`),
+            makeFullUrl(`/parties/by_user/${this.mainStore.userStore.user?._id}`),
             Party
         )
         this.setEntities(parties.sort(sortByCreatedAt));
@@ -46,7 +46,7 @@ export class PartiesStore extends EntitiesStore<Party> {
     async createParty(name: string, asyncSaveStore: AsyncSaveStore) {
         this.createEntity(
             makeFullUrl('/parties/add'),
-            { name, users: [this.mainStore.userStore.user._id] },
+            { name, users: [this.mainStore.userStore.user?._id] },
             true,
             Party,
             asyncSaveStore,

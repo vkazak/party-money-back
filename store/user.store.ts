@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios, { config } from '../api_middleware/api_client';
 import * as Google from 'expo-google-app-auth';
 import { action, observable } from "mobx";
+import { AsyncStorage } from 'react-native';
 import { Member } from '../entities/member.entity';
 import { makeFullUrl } from '../utils';
 
@@ -10,12 +11,6 @@ export const LoginState = {
     SUCCESS: 'SUCCESS',
     ERROR: 'ERROR'
 }
-
-const config = {
-    expoClientId: '260269100580-5m6deds5j5fg0mcktvf6h36ine2ul2m9.apps.googleusercontent.com',
-    iosClientId: '260269100580-mjn536bchrjebb4ns97p076t8h1d42sa.apps.googleusercontent.com',
-    androidClientId: '260269100580-5vp9bfg6k4erkr5il5che90b63m4gvkv.apps.googleusercontent.com',
-};
 
 export class UserStore {
     @observable loginState = LoginState.INIT;
@@ -38,16 +33,27 @@ export class UserStore {
         this.loginState = LoginState.SUCCESS;
     }
 
-    async tryToLogIn() {
+    async tryToLogInWithExistsCredentials() {
+        try {
+            this.setLoginStatePending();
+            const response = await axios.get(makeFullUrl('/users/by_token'));
+            const dbUser = response.data;
+            this.user = new Member(dbUser);
+            this.setLoginStateSuccess();
+        } catch(err) {
+            this.setLoginStateError(err);
+        }
+        
+    }
+
+    async getNewTokensAndLogIn() {
         try {
             this.setLoginStatePending();
             const logInResult = await Google.logInAsync(config);
             if (logInResult.type == 'success') { // smells TODO
-                const appUser = await this.convertGoogleUserInfoToAppUser(logInResult.user);
-                if (this.loginState !== LoginState.ERROR) {
-                    this.user = appUser;
-                    this.setLoginStateSuccess();
-                }
+                AsyncStorage.setItem('refreshToken', logInResult.refreshToken || '');
+                AsyncStorage.setItem('accessToken', logInResult.accessToken || '');
+                this.setUserStoreFromUserInfo(logInResult.user)
             }
         } catch (err) {
             this.setLoginStateError(err)
@@ -55,11 +61,12 @@ export class UserStore {
     }
     
     // don't forget that it actually updates user in db. Settle updating TODO
-    async convertGoogleUserInfoToAppUser(userInfo) {
+    async setUserStoreFromUserInfo(userInfo) {
         try {
             const response = await axios.post(makeFullUrl('/users/google_user_upd'), { userInfo });
             const dbUser = response.data;
-            return ( new Member(dbUser) );
+            this.user = new Member(dbUser);
+            this.setLoginStateSuccess();
         } catch(err) {
             this.setLoginStateError(err);
         }

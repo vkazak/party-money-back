@@ -1,16 +1,16 @@
+import { computed } from 'mobx';
 import { observer } from 'mobx-react';
 import React from 'react';
-import { StoreContext } from '../../context/store_context';
-import { BodyContainer} from '../../components/component_containers';
-import { AppStyles, APP_BLUE, APP_COLOR, APP_FONT, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { AddEditPaymentDialogs, AddEditPaymentViewStore } from '../../store/view_store/party_payments_view_store/add_edit_payment_view.store';
 import { AddMembersOverlay } from '../../components/add_members_overlay';
-import { DataStatus } from '../../store/pattern_store/async_data.store';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { MessyMembersList } from '../../components/messy_members_list';
-import { computed } from 'mobx';
+import { BodyContainer } from '../../components/component_containers';
 import { FullWidthButton } from '../../components/full_width_button';
+import { MessyMembersList } from '../../components/messy_members_list';
+import { StoreContext } from '../../context/store_context';
+import { DataStatus } from '../../store/pattern_store/async_data.store';
+import { AddEditPaymentDialogs, AddEditPaymentViewStore } from '../../store/view_store/party_payments_view_store/add_edit_payment_view.store';
+import { APP_COLOR, APP_FONT_SEMIBOLD, APP_GREEN } from '../../styles';
 
 @observer
 class WhoPay extends React.Component {
